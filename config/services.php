@@ -47,4 +47,15 @@ return [
         'api_url' => env('VNPAY_API_URL', 'https://sandbox.vnpayment.vn/merchant_webapi/api/transaction'),
     ],
 
+    'paypal' => [
+        'client_id' => env('PAYPAL_CLIENT_ID'),
+        'client_secret' => env('PAYPAL_CLIENT_SECRET'),
+        'mode' => env('PAYPAL_MODE', 'sandbox'), // 'sandbox' or 'live'
+        'currency' => env('PAYPAL_CURRENCY', 'USD'),
+        'exchange_rate' => env('PAYPAL_EXCHANGE_RATE', 24000), // VND to USD
+        'return_url' => env('PAYPAL_RETURN_URL', env('APP_URL') . '/payments/paypal/callback'),
+        'cancel_url' => env('PAYPAL_CANCEL_URL', env('APP_URL') . '/payments/paypal/cancel'),
+        'webhook_id' => env('PAYPAL_WEBHOOK_ID'), // For webhook verification
+    ],
+
 ];

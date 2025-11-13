@@ -18,7 +18,7 @@
                         <h3 class="text-xl font-bold text-gray-900">Thông Tin Thanh Toán</h3>
                         <p class="text-sm text-gray-500 mt-1">Mã giao dịch: {{ $payment->transaction_id }}</p>
                     </div>
-                    @if($payment->status == 'completed')
+                    @if($payment->status == 'success')
                         <span class="px-3 py-1 text-sm font-semibold rounded-full bg-green-100 text-green-800">
                             Thành công
                         </span>
@@ -44,7 +44,7 @@
                     </div>
                     <div>
                         <p class="text-sm text-gray-500">Phương thức thanh toán</p>
-                        <p class="text-lg font-semibold text-gray-900">{{ strtoupper($payment->provider) }}</p>
+                        <p class="text-lg font-semibold text-gray-900">{{ strtoupper($payment->payment_method) }}</p>
                     </div>
                     <div>
                         <p class="text-sm text-gray-500">Ngày thanh toán</p>
@@ -56,7 +56,7 @@
                     </div>
                 </div>
 
-                @if($payment->status == 'completed')
+                @if($payment->status == 'success')
                     <div class="mt-6 pt-6 border-t border-gray-200">
                         <h4 class="font-semibold text-gray-900 mb-4">Hoàn Tiền</h4>
                         <form action="{{ route('admin.payments.refund', $payment) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn hoàn tiền cho giao dịch này?')">

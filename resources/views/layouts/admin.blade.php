@@ -32,7 +32,6 @@
             <!-- Logo -->
             <div class="flex items-center justify-between px-6 py-6 border-b border-indigo-700">
                 <div class="flex items-center space-x-3">
-                    <x-application-logo class="h-10 w-10 text-white" />
                     <span class="text-xl font-bold">Admin Panel</span>
                 </div>
                 <button @click="sidebarOpen = false" class="lg:hidden text-white hover:text-gray-200">

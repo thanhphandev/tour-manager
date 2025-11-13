@@ -57,7 +57,15 @@ Route::prefix('payments')->middleware('auth')->group(function () {
     Route::get('/{booking}', [PaymentController::class, 'show'])->name('payments.show');
     Route::post('/{booking}/mock', [PaymentController::class, 'processMock'])->name('payments.process.mock');
     Route::post('/{booking}/vnpay', [PaymentController::class, 'processVNPay'])->name('payments.process.vnpay');
+    Route::post('/{booking}/paypal', [PaymentController::class, 'processPayPal'])->name('payments.process.paypal');
+    
+    // Callbacks
     Route::get('/vnpay/callback', [PaymentController::class, 'vnpayCallback'])->name('payments.vnpay.callback');
+    Route::get('/paypal/callback', [PaymentController::class, 'paypalCallback'])->name('payments.paypal.callback');
+    Route::get('/paypal/cancel', [PaymentController::class, 'paypalCancel'])->name('payments.paypal.cancel');
+    
+    // Error page
+    Route::get('/{booking}/error', [PaymentController::class, 'error'])->name('payments.error');
 });
 
 // ----- Reviews -----

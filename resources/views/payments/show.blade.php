@@ -16,13 +16,14 @@
                             <h2 class="text-2xl font-bold text-gray-900 mb-4">Chọn Phương Thức Thanh Toán</h2>
                             <div class="border-b border-gray-200">
                                 <nav class="-mb-px flex space-x-8">
-                                    <button onclick="showPaymentMethod('mock')" id="tab-mock"
+                                    <button onclick="showPaymentMethod('paypal')" id="tab-paypal"
                                             class="payment-tab border-b-2 border-indigo-500 py-4 px-1 text-center text-sm font-medium text-indigo-600 whitespace-nowrap">
                                         <div class="flex items-center">
-                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M20.067 8.478c.492.88.556 2.014.3 3.327-.74 3.806-3.276 5.12-6.514 5.12h-.5a.805.805 0 00-.794.68l-.04.22-.63 3.993-.028.15a.804.804 0 01-.793.679H8.136c-.379 0-.664-.31-.575-.672l.99-6.28c.1-.645.652-1.1 1.306-1.1h1.095c3.476 0 6.176-1.413 6.964-5.502.265-1.374.172-2.52-.31-3.32a2.67 2.67 0 00-.844-.932C18.724 5.452 20.716 6.402 20.067 8.478z"/>
+                                                <path d="M15.762 5.8c-.263-.092-.54-.17-.83-.233-.736-.162-1.554-.244-2.446-.244h-4.61a.975.975 0 00-.963.823l-1.405 8.904a.585.585 0 00.577.678h3.216l.807-5.122-.025.16a.975.975 0 01.963-.824h2.01c3.947 0 7.04-1.604 7.943-6.24.024-.125.043-.247.06-.366-.23-.127-.477-.238-.74-.327-.22-.075-.45-.14-.688-.194z"/>
                                             </svg>
-                                            Thẻ Tín Dụng (Mock)
+                                            PayPal
                                         </div>
                                     </button>
                                     <button onclick="showPaymentMethod('vnpay')" id="tab-vnpay"
@@ -34,8 +35,152 @@
                                             VNPay
                                         </div>
                                     </button>
+                                    <button onclick="showPaymentMethod('mock')" id="tab-mock"
+                                            class="payment-tab border-b-2 border-transparent py-4 px-1 text-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                            </svg>
+                                            Thẻ Tín Dụng (Demo)
+                                        </div>
+                                    </button>
                                 </nav>
                             </div>
+                        </div>
+
+                        <!-- PayPal Payment -->
+                        <div id="payment-paypal" class="payment-content">
+                            <form action="{{ route('payments.process.paypal', $booking) }}" method="POST" class="space-y-6">
+                                @csrf
+
+                                <!-- PayPal Logo & Info -->
+                                <div class="text-center py-6 border-b border-gray-200">
+                                    <div class="inline-flex items-center justify-center w-20 h-20 bg-blue-100 rounded-full mb-4">
+                                        <svg class="w-12 h-12 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M20.067 8.478c.492.88.556 2.014.3 3.327-.74 3.806-3.276 5.12-6.514 5.12h-.5a.805.805 0 00-.794.68l-.04.22-.63 3.993-.028.15a.804.804 0 01-.793.679H8.136c-.379 0-.664-.31-.575-.672l.99-6.28c.1-.645.652-1.1 1.306-1.1h1.095c3.476 0 6.176-1.413 6.964-5.502.265-1.374.172-2.52-.31-3.32a2.67 2.67 0 00-.844-.932C18.724 5.452 20.716 6.402 20.067 8.478z"/>
+                                            <path d="M15.762 5.8c-.263-.092-.54-.17-.83-.233-.736-.162-1.554-.244-2.446-.244h-4.61a.975.975 0 00-.963.823l-1.405 8.904a.585.585 0 00.577.678h3.216l.807-5.122-.025.16a.975.975 0 01.963-.824h2.01c3.947 0 7.04-1.604 7.943-6.24.024-.125.043-.247.06-.366-.23-.127-.477-.238-.74-.327-.22-.075-.45-.14-.688-.194z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-900 mb-2">Thanh Toán qua PayPal</h3>
+                                    <p class="text-gray-600 text-sm">An toàn, nhanh chóng, được bảo vệ bởi PayPal</p>
+                                </div>
+
+                                <!-- Payment Info -->
+                                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 space-y-4">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-700 font-medium">Số tiền thanh toán:</span>
+                                        <div class="text-right">
+                                            <span class="text-2xl font-bold text-indigo-600">{{ number_format($booking->total_amount) }} đ</span>
+                                            <p class="text-sm text-gray-600 mt-1">≈ ${{ number_format($booking->total_amount / 24000, 2) }} USD</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-gray-600">Mã đặt chỗ:</span>
+                                        <span class="font-semibold text-gray-900">{{ $booking->booking_code }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-gray-600">Tour:</span>
+                                        <span class="font-semibold text-gray-900 text-right">{{ Str::limit($booking->tour->name, 30) }}</span>
+                                    </div>
+                                </div>
+
+                                <!-- PayPal Benefits -->
+                                <div class="bg-white border-2 border-blue-100 rounded-xl p-6">
+                                    <h4 class="text-sm font-semibold text-gray-900 mb-3">Ưu điểm PayPal</h4>
+                                    <ul class="space-y-2 text-sm text-gray-700">
+                                        <li class="flex items-start">
+                                            <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                            <span>Bảo vệ người mua - Hoàn tiền 100% nếu có vấn đề</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                            <span>Thanh toán quốc tế - Hỗ trợ 200+ quốc gia</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                            <span>Không chia sẻ thông tin tài chính với người bán</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                            <span>Mã hóa cấp độ ngân hàng và giám sát gian lận 24/7</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <!-- How it works -->
+                                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6">
+                                    <h4 class="text-sm font-semibold text-gray-900 mb-4">Cách thức hoạt động</h4>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
+                                            <p class="ml-3 text-sm text-gray-700">Nhấn nút "Thanh toán với PayPal" bên dưới</p>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-sm">2</div>
+                                            <p class="ml-3 text-sm text-gray-700">Đăng nhập PayPal hoặc thanh toán bằng thẻ</p>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-sm">3</div>
+                                            <p class="ml-3 text-sm text-gray-700">Xác nhận thanh toán và quay lại trang web</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Important Notice -->
+                                <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
+                                    <div class="flex items-start">
+                                        <svg class="w-5 h-5 text-amber-500 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                        </svg>
+                                        <div>
+                                            <p class="text-sm font-medium text-amber-800">Lưu ý quan trọng</p>
+                                            <ul class="text-xs text-amber-700 mt-2 space-y-1 list-disc list-inside">
+                                                <li>Bạn sẽ được chuyển đến trang thanh toán PayPal an toàn</li>
+                                                <li>Không cần tài khoản PayPal - có thể thanh toán bằng thẻ tín dụng/ghi nợ</li>
+                                                <li>Vui lòng không đóng trình duyệt cho đến khi hoàn tất thanh toán</li>
+                                                <li>Tỷ giá chuyển đổi VND/USD có thể thay đổi theo thời gian thực</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Security Info -->
+                                <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg">
+                                    <div class="flex items-start">
+                                        <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                        </svg>
+                                        <div class="flex-1">
+                                            <p class="text-sm font-medium text-green-800">Thanh toán an toàn & bảo mật tuyệt đối</p>
+                                            <p class="text-xs text-green-700 mt-1">Được bảo vệ bởi PayPal với mã hóa SSL 256-bit và công nghệ chống gian lận tiên tiến.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <button type="submit" 
+                                        class="w-full flex justify-center items-center py-4 px-6 border border-transparent rounded-lg shadow-lg text-base font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-[1.02]">
+                                    <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M20.067 8.478c.492.88.556 2.014.3 3.327-.74 3.806-3.276 5.12-6.514 5.12h-.5a.805.805 0 00-.794.68l-.04.22-.63 3.993-.028.15a.804.804 0 01-.793.679H8.136c-.379 0-.664-.31-.575-.672l.99-6.28c.1-.645.652-1.1 1.306-1.1h1.095c3.476 0 6.176-1.413 6.964-5.502.265-1.374.172-2.52-.31-3.32a2.67 2.67 0 00-.844-.932C18.724 5.452 20.716 6.402 20.067 8.478z"/>
+                                    </svg>
+                                    Thanh Toán với PayPal
+                                </button>
+
+                                <div class="text-center space-y-2">
+                                    <button type="button" onclick="showPaymentMethod('vnpay')" 
+                                            class="text-sm text-gray-600 hover:text-gray-800 underline">
+                                        Hoặc sử dụng VNPay (VND)
+                                    </button>
+                                </div>
+                            </form>
                         </div>
 
                         <!-- Mock Payment Form -->
@@ -250,9 +395,9 @@
                                 </button>
 
                                 <div class="text-center">
-                                    <button type="button" onclick="showPaymentMethod('mock')" 
+                                    <button type="button" onclick="showPaymentMethod('paypal')" 
                                             class="text-sm text-gray-600 hover:text-gray-800 underline">
-                                        Hoặc sử dụng Mock Payment
+                                        Hoặc sử dụng PayPal
                                     </button>
                                 </div>
                             </form>
