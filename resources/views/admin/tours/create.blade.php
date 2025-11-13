@@ -1,83 +1,75 @@
 <x-admin-layout>
-    <x-slot name="breadcrumb">
-        <span class="text-gray-600">Quản lý Tour</span>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Thêm Tour Mới') }}
+        </h2>
     </x-slot>
-    
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Header Section -->
-        <div class="mb-8">
-            <div class="sm:flex sm:items-center sm:justify-between">
-                <div class="flex-1 min-w-0">
-                    <h1 class="text-3xl font-bold text-gray-900 sm:text-4xl">
-                        <span class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                            Tạo Tour Mới
-                        </span>
-                    </h1>
-                    <p class="mt-2 text-sm text-gray-600 max-w-2xl">
-                        Điền đầy đủ thông tin để tạo một tour du lịch mới trong hệ thống
-                    </p>
-                </div>
-                <div class="mt-4 sm:mt-0">
-                    <a href="{{ route('admin.tours.index') }}" 
-                       class="inline-flex items-center px-6 py-3 bg-white border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all duration-200 hover:shadow-md">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                        </svg>
-                        Quay Lại
-                    </a>
-                </div>
-            </div>
-        </div>
 
-        <!-- Error Messages -->
-        @if ($errors->any())
-            <div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-6 shadow-sm">
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <svg class="h-6 w-6 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                        </svg>
-                    </div>
-                    <div class="ml-4 flex-1">
-                        <h3 class="text-sm font-semibold text-red-800">
-                            Có {{ $errors->count() }} lỗi cần khắc phục:
-                        </h3>
-                        <ul class="mt-3 space-y-1 text-sm text-red-700">
-                            @foreach ($errors->all() as $error)
-                                <li class="flex items-start">
-                                    <svg class="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                                    </svg>
-                                    {{ $error }}
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        @endif
-
-        <!-- Main Form -->
-        <form action="{{ route('admin.tours.store') }}" method="POST" enctype="multipart/form-data" id="tourForm" class="space-y-6">
-            @csrf
-            
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Main Content Column -->
-                <div class="lg:col-span-2 space-y-6">
-                    
-                    <!-- Basic Information -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200">
-                        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
-                            <div class="flex items-center">
-                                <svg class="w-6 h-6 text-white mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                <h2 class="text-xl font-semibold text-white">Thông Tin Cơ Bản</h2>
-                            </div>
+    <div class="py-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            {{-- Breadcrumb --}}
+            <nav class="flex mb-6" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="{{ route('admin.tours.index') }}" 
+                           class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                            </svg>
+                            Quản lý Tours
+                        </a>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Thêm Tour Mới</span>
                         </div>
-                        <div class="p-6 space-y-6">
-                            <!-- Tour Name -->
-                            <div>
+                    </li>
+                </ol>
+            </nav>
+
+            {{-- Header Section --}}
+            <div class="mb-8">
+                <div class="flex items-center gap-4">
+                    <div class="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">Tạo Tour Mới</h1>
+                        <p class="mt-1 text-sm text-gray-600">Điền thông tin chi tiết để thêm tour mới vào hệ thống</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SimpleMDE CSS -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+
+            {{-- Form Section --}}
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <form action="{{ route('admin.tours.store') }}" method="POST" enctype="multipart/form-data" id="tourForm">
+                    @csrf
+                    
+                    {{-- Basic Information Section --}}
+                    <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
+                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Thông Tin Cơ Bản
+                        </h3>
+                        <p class="mt-1 text-sm text-gray-600">Thông tin chính về tour du lịch</p>
+                    </div>
+
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {{-- Tên Tour --}}
+                            <div class="lg:col-span-2">
                                 <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
                                     Tên Tour <span class="text-red-500">*</span>
                                 </label>
@@ -86,8 +78,8 @@
                                        id="name" 
                                        value="{{ old('name') }}" 
                                        required
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 @error('name') border-red-300 @enderror"
-                                       placeholder="Ví dụ: Du lịch Hạ Long 3 ngày 2 đêm">
+                                       placeholder="Ví dụ: Du lịch Đà Nẵng - Hội An 3 ngày 2 đêm"
+                                       class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm @error('name') border-red-500 @enderror">
                                 @error('name')
                                     <p class="mt-2 text-sm text-red-600 flex items-center">
                                         <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -98,7 +90,7 @@
                                 @enderror
                             </div>
 
-                            <!-- Destination -->
+                            {{-- Điểm đến --}}
                             <div>
                                 <label for="destination_id" class="block text-sm font-semibold text-gray-700 mb-2">
                                     Điểm Đến <span class="text-red-500">*</span>
@@ -106,547 +98,600 @@
                                 <select name="destination_id" 
                                         id="destination_id" 
                                         required
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 @error('destination_id') border-red-300 @enderror">
+                                        class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm @error('destination_id') border-red-500 @enderror">
                                     <option value="">-- Chọn điểm đến --</option>
                                     @foreach($destinations as $destination)
-                                        <option value="{{ $destination->id }}" @selected(old('destination_id') == $destination->id)>
+                                        <option value="{{ $destination->id }}" {{ old('destination_id') == $destination->id ? 'selected' : '' }}>
                                             {{ $destination->name }}
                                         </option>
                                     @endforeach
                                 </select>
                                 @error('destination_id')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                    <p class="mt-2 text-sm text-red-600 flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
                                 @enderror
                             </div>
 
-                            <!-- Short Description -->
+                            {{-- Trạng thái --}}
                             <div>
+                                <label for="status" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Trạng Thái <span class="text-red-500">*</span>
+                                </label>
+                                <select name="status" 
+                                        id="status" 
+                                        required
+                                        class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm @error('status') border-red-500 @enderror">
+                                    <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>
+                                        ✅ Hoạt động
+                                    </option>
+                                    <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>
+                                        ⏸️ Tạm dừng
+                                    </option>
+                                    <option value="sold_out" {{ old('status') == 'sold_out' ? 'selected' : '' }}>
+                                        ❌ Hết chỗ
+                                    </option>
+                                </select>
+                                @error('status')
+                                    <p class="mt-2 text-sm text-red-600 flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+
+                            {{-- Tour Nổi Bật --}}
+                            <div class="lg:col-span-2">
+                                <div class="flex items-center p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                    <input type="checkbox" 
+                                           name="featured" 
+                                           id="featured" 
+                                           value="1" 
+                                           {{ old('featured') ? 'checked' : '' }}
+                                           class="h-5 w-5 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded">
+                                    <label for="featured" class="ml-3 flex items-center text-sm font-medium text-gray-900">
+                                        <svg class="w-5 h-5 text-yellow-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                        </svg>
+                                        Đánh dấu là Tour Nổi Bật
+                                        <span class="ml-2 text-xs text-gray-500">(Hiển thị ưu tiên trên trang chủ)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            {{-- Mô tả ngắn --}}
+                            <div class="lg:col-span-2">
                                 <label for="short_description" class="block text-sm font-semibold text-gray-700 mb-2">
                                     Mô Tả Ngắn <span class="text-red-500">*</span>
+                                    <span class="text-gray-500 font-normal text-xs">(Tối đa 500 ký tự)</span>
                                 </label>
                                 <textarea name="short_description" 
                                           id="short_description" 
                                           rows="3" 
                                           required
-                                          class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none @error('short_description') border-red-300 @enderror"
-                                          placeholder="Mô tả ngắn gọn về tour (tối đa 500 ký tự)...">{{ old('short_description') }}</textarea>
-                                <div class="mt-1 flex justify-between">
-                                    <p class="text-xs text-gray-500">Mô tả ngắn hiển thị trên danh sách tour</p>
-                                    <p class="text-xs text-gray-500"><span id="charCount">0</span>/500</p>
+                                          maxlength="500"
+                                          placeholder="Mô tả ngắn gọn về tour, thu hút khách hàng..."
+                                          class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm @error('short_description') border-red-500 @enderror">{{ old('short_description') }}</textarea>
+                                <div class="mt-1 flex justify-between items-center">
+                                    @error('short_description')
+                                        <p class="text-sm text-red-600 flex items-center">
+                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                            </svg>
+                                            {{ $message }}
+                                        </p>
+                                    @else
+                                        <span></span>
+                                    @enderror
+                                    <span class="text-xs text-gray-500" id="charCount">0 / 500</span>
                                 </div>
-                                @error('short_description')
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Pricing Section --}}
+                    <div class="border-t border-gray-200 bg-gray-50 px-6 py-4">
+                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Giá Tour
+                        </h3>
+                        <p class="mt-1 text-sm text-gray-600">Thiết lập giá cho các đối tượng khách hàng</p>
+                    </div>
+
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {{-- Giá Người Lớn --}}
+                            <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                                <label for="price_adult" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    👨 Giá Người Lớn <span class="text-red-500">*</span>
+                                    <span class="block text-xs text-gray-500 font-normal mt-1">(≥ 12 tuổi)</span>
+                                </label>
+                                <div class="relative mt-2">
+                                    <input type="number" 
+                                           name="price_adult" 
+                                           id="price_adult" 
+                                           value="{{ old('price_adult') }}" 
+                                           required 
+                                           min="0" 
+                                           step="1000"
+                                           placeholder="0"
+                                           class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 pr-12 text-sm @error('price_adult') border-red-500 @enderror">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 text-sm">VNĐ</span>
+                                    </div>
+                                </div>
+                                @error('price_adult')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            
+                            {{-- Giá Trẻ Em --}}
+                            <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+                                <label for="price_child" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    👦 Giá Trẻ Em <span class="text-red-500">*</span>
+                                    <span class="block text-xs text-gray-500 font-normal mt-1">(2-11 tuổi)</span>
+                                </label>
+                                <div class="relative mt-2">
+                                    <input type="number" 
+                                           name="price_child" 
+                                           id="price_child" 
+                                           value="{{ old('price_child') }}" 
+                                           required 
+                                           min="0" 
+                                           step="1000"
+                                           placeholder="0"
+                                           class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 pr-12 text-sm @error('price_child') border-red-500 @enderror">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 text-sm">VNĐ</span>
+                                    </div>
+                                </div>
+                                @error('price_child')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            
+                            {{-- Giá Em Bé --}}
+                            <div class="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+                                <label for="price_infant" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    👶 Giá Em Bé <span class="text-red-500">*</span>
+                                    <span class="block text-xs text-gray-500 font-normal mt-1">(< 2 tuổi)</span>
+                                </label>
+                                <div class="relative mt-2">
+                                    <input type="number" 
+                                           name="price_infant" 
+                                           id="price_infant" 
+                                           value="{{ old('price_infant', 0) }}" 
+                                           required 
+                                           min="0" 
+                                           step="1000"
+                                           placeholder="0"
+                                           class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 pr-12 text-sm @error('price_infant') border-red-500 @enderror">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 text-sm">VNĐ</span>
+                                    </div>
+                                </div>
+                                @error('price_infant')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Schedule & Capacity Section --}}
+                    <div class="border-t border-gray-200 bg-gray-50 px-6 py-4">
+                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            Lịch Trình & Sức Chứa
+                        </h3>
+                        <p class="mt-1 text-sm text-gray-600">Thông tin về thời gian và số lượng khách</p>
+                    </div>
+
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {{-- Ngày bắt đầu --}}
+                            <div>
+                                <label for="start_date" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Ngày Bắt Đầu <span class="text-red-500">*</span>
+                                </label>
+                                <input type="date" 
+                                       name="start_date" 
+                                       id="start_date" 
+                                       value="{{ old('start_date') }}"
+                                       required
+                                       min="{{ date('Y-m-d') }}"
+                                       class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm @error('start_date') border-red-500 @enderror">
+                                @error('start_date')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                            <!-- Pricing Section -->
+                            {{-- Ngày kết thúc --}}
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-3">
-                                    Bảng Giá Tour <span class="text-red-500">*</span>
+                                <label for="end_date" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Ngày Kết Thúc <span class="text-red-500">*</span>
                                 </label>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <!-- Adult Price -->
-                                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
-                                        <label for="price_adult" class="block text-xs font-semibold text-blue-900 mb-2">
-                                            👨 Người Lớn (≥12 tuổi)
-                                        </label>
-                                        <div class="relative">
-                                            <input type="number" 
-                                                   name="price_adult" 
-                                                   id="price_adult" 
-                                                   value="{{ old('price_adult') }}" 
-                                                   required 
-                                                   min="0"
-                                                   step="1000"
-                                                   class="w-full px-4 py-2.5 pr-16 border-0 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all @error('price_adult') ring-2 ring-red-300 @enderror"
-                                                   placeholder="5000000">
-                                            <span class="absolute right-3 top-2.5 text-gray-600 text-sm font-medium">VND</span>
-                                        </div>
-                                        @error('price_adult')
-                                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                    
-                                    <!-- Child Price -->
-                                    <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
-                                        <label for="price_child" class="block text-xs font-semibold text-green-900 mb-2">
-                                            👦 Trẻ Em (2-11 tuổi)
-                                        </label>
-                                        <div class="relative">
-                                            <input type="number" 
-                                                   name="price_child" 
-                                                   id="price_child" 
-                                                   value="{{ old('price_child') }}" 
-                                                   required 
-                                                   min="0"
-                                                   step="1000"
-                                                   class="w-full px-4 py-2.5 pr-16 border-0 rounded-lg focus:ring-2 focus:ring-green-500 transition-all @error('price_child') ring-2 ring-red-300 @enderror"
-                                                   placeholder="3500000">
-                                            <span class="absolute right-3 top-2.5 text-gray-600 text-sm font-medium">VND</span>
-                                        </div>
-                                        @error('price_child')
-                                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                    
-                                    <!-- Infant Price -->
-                                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
-                                        <label for="price_infant" class="block text-xs font-semibold text-purple-900 mb-2">
-                                            👶 Em Bé (&lt;2 tuổi)
-                                        </label>
-                                        <div class="relative">
-                                            <input type="number" 
-                                                   name="price_infant" 
-                                                   id="price_infant" 
-                                                   value="{{ old('price_infant') }}" 
-                                                   required 
-                                                   min="0"
-                                                   step="1000"
-                                                   class="w-full px-4 py-2.5 pr-16 border-0 rounded-lg focus:ring-2 focus:ring-purple-500 transition-all @error('price_infant') ring-2 ring-red-300 @enderror"
-                                                   placeholder="1000000">
-                                            <span class="absolute right-3 top-2.5 text-gray-600 text-sm font-medium">VND</span>
-                                        </div>
-                                        @error('price_infant')
-                                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                </div>
+                                <input type="date" 
+                                       name="end_date" 
+                                       id="end_date" 
+                                       value="{{ old('end_date') }}"
+                                       required
+                                       min="{{ date('Y-m-d') }}"
+                                       class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm @error('end_date') border-red-500 @enderror">
+                                @error('end_date')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
 
-                            <!-- Duration & Dates -->
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <!-- Duration -->
-                                <div>
-                                    <label for="duration_days" class="block text-sm font-semibold text-gray-700 mb-2">
-                                        Số Ngày <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="number" 
-                                           name="duration_days" 
-                                           id="duration_days" 
-                                           value="{{ old('duration_days') }}" 
-                                           required
-                                           min="1"
-                                           max="365"
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all @error('duration_days') border-red-300 @enderror"
-                                           placeholder="3">
-                                    <p class="mt-1 text-xs text-gray-500">1-365 ngày</p>
-                                    @error('duration_days')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Start Date -->
-                                <div>
-                                    <label for="start_date" class="block text-sm font-semibold text-gray-700 mb-2">
-                                        Ngày Bắt Đầu <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="date" 
-                                           name="start_date" 
-                                           id="start_date" 
-                                           value="{{ old('start_date') }}"
-                                           required
-                                           min="{{ date('Y-m-d') }}"
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all @error('start_date') border-red-300 @enderror">
-                                    @error('start_date')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- End Date -->
-                                <div>
-                                    <label for="end_date" class="block text-sm font-semibold text-gray-700 mb-2">
-                                        Ngày Kết Thúc <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="date" 
-                                           name="end_date" 
-                                           id="end_date" 
-                                           value="{{ old('end_date') }}"
-                                           required
-                                           min="{{ date('Y-m-d') }}"
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all @error('end_date') border-red-300 @enderror">
-                                    @error('end_date')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Full Description -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200">
-                        <div class="bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-4">
-                            <div class="flex items-center">
-                                <svg class="w-6 h-6 text-white mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                </svg>
-                                <h2 class="text-xl font-semibold text-white">Mô Tả Đầy Đủ</h2>
-                            </div>
-                        </div>
-                        <div class="p-6">
-                            <textarea name="full_description" 
-                                      id="full_description" 
-                                      required>{{ old('full_description') }}</textarea>
-                            @error('full_description')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- Itinerary -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200">
-                        <div class="bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-4">
-                            <div class="flex items-center">
-                                <svg class="w-6 h-6 text-white mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-                                </svg>
-                                <h2 class="text-xl font-semibold text-white">Lịch Trình Chi Tiết</h2>
-                            </div>
-                        </div>
-                        <div class="p-6">
-                            <textarea name="itinerary" 
-                                      id="itinerary" 
-                                      required>{{ old('itinerary') }}</textarea>
-                            @error('itinerary')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- Tour Images -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200">
-                        <div class="bg-gradient-to-r from-orange-600 to-red-600 px-6 py-4">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <svg class="w-6 h-6 text-white mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                    <h2 class="text-xl font-semibold text-white">Hình Ảnh Tour</h2>
-                                </div>
-                                <span class="text-xs text-white bg-white bg-opacity-20 px-3 py-1 rounded-full">Tùy chọn</span>
-                            </div>
-                        </div>
-                        <div class="p-6">
-                            <div id="dropzone" class="relative border-2 border-dashed border-gray-300 rounded-xl p-12 text-center hover:border-blue-500 hover:bg-blue-50 transition-all duration-200 cursor-pointer group">
-                                <svg class="mx-auto h-16 w-16 text-gray-400 group-hover:text-blue-500 transition-colors" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                <p class="mt-4 text-base font-medium text-gray-700">Kéo và thả ảnh vào đây</p>
-                                <p class="mt-1 text-sm text-gray-500">hoặc click để chọn từ máy tính</p>
-                                <p class="mt-2 text-xs text-gray-400">PNG, JPG, JPEG, WEBP tối đa 5MB mỗi ảnh</p>
-                            </div>
-                            <input type="file" name="images[]" id="images" multiple accept="image/jpeg,image/jpg,image/png,image/webp" class="hidden">
-                            <div id="preview" class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sidebar Column -->
-                <div class="space-y-6">
-                    
-                    <!-- Settings Card -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200 lg:sticky lg:top-24">
-                        <div class="bg-gradient-to-r from-indigo-600 to-blue-600 px-6 py-4">
-                            <div class="flex items-center">
-                                <svg class="w-6 h-6 text-white mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                                <h2 class="text-xl font-semibold text-white">Cài Đặt Tour</h2>
-                            </div>
-                        </div>
-                        <div class="p-6 space-y-6">
-                            
-                            <!-- Thumbnail -->
+                            {{-- Số ngày --}}
                             <div>
-                                <label for="thumbnail" class="block text-sm font-semibold text-gray-700 mb-3">
+                                <label for="duration_days" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Số Ngày <span class="text-red-500">*</span>
+                                    <span class="block text-xs text-gray-500 font-normal mt-1">(Tự động tính)</span>
+                                </label>
+                                <input type="number" 
+                                       name="duration_days" 
+                                       id="duration_days" 
+                                       value="{{ old('duration_days', 1) }}" 
+                                       required
+                                       min="1" 
+                                       max="365"
+                                       readonly
+                                       class="block w-full rounded-lg border-gray-300 bg-gray-50 shadow-sm text-sm @error('duration_days') border-red-500 @enderror">
+                                @error('duration_days')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Số đêm (hidden, auto-calculated) --}}
+                            <input type="hidden" name="duration_nights" id="duration_nights" value="{{ old('duration_nights', 0) }}">
+
+                            {{-- Số người tối đa --}}
+                            <div>
+                                <label for="max_people" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Số Người Tối Đa <span class="text-red-500">*</span>
+                                </label>
+                                <input type="number" 
+                                       name="max_people" 
+                                       id="max_people" 
+                                       value="{{ old('max_people') }}" 
+                                       required
+                                       min="1" 
+                                       max="1000"
+                                       placeholder="Ví dụ: 20"
+                                       class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm @error('max_people') border-red-500 @enderror">
+                                @error('max_people')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Images Section --}}
+                    <div class="border-t border-gray-200 bg-gray-50 px-6 py-4">
+                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            Hình Ảnh Tour
+                        </h3>
+                        <p class="mt-1 text-sm text-gray-600">Tải lên ảnh đại diện và ảnh chi tiết của tour</p>
+                    </div>
+
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {{-- Thumbnail --}}
+                            <div>
+                                <label for="thumbnail" class="block text-sm font-semibold text-gray-700 mb-2">
                                     Ảnh Đại Diện <span class="text-red-500">*</span>
+                                    <span class="block text-xs text-gray-500 font-normal mt-1">(Tối đa 5MB - JPG, PNG, WEBP)</span>
                                 </label>
-                                <div id="thumbnailPreview" class="hidden mb-4">
-                                    <div class="relative group">
-                                        <img src="" alt="Preview" class="w-full h-56 object-cover rounded-xl border-2 border-gray-200">
-                                        <button type="button" 
-                                                onclick="removeThumbnail()"
-                                                class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                <div class="mt-2">
+                                    <div class="flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-400 transition-colors" id="thumbnailDropZone">
+                                        <div class="space-y-2 text-center">
+                                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                             </svg>
+                                            <div class="flex text-sm text-gray-600">
+                                                <label for="thumbnail" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                                    <span>Tải lên ảnh</span>
+                                                    <input id="thumbnail" 
+                                                           name="thumbnail" 
+                                                           type="file" 
+                                                           class="sr-only" 
+                                                           accept="image/jpeg,image/jpg,image/png,image/webp"
+                                                           required>
+                                                </label>
+                                                <p class="pl-1">hoặc kéo thả</p>
+                                            </div>
+                                            <p class="text-xs text-gray-500">PNG, JPG, WEBP tới 5MB</p>
+                                        </div>
+                                    </div>
+                                    <div id="thumbnailPreview" class="mt-4 hidden">
+                                        <img src="" alt="Preview" class="w-full h-48 object-cover rounded-lg border border-gray-300">
+                                        <button type="button" onclick="removeThumbnail()" class="mt-2 text-sm text-red-600 hover:text-red-800">
+                                            ✕ Xóa ảnh
                                         </button>
                                     </div>
                                 </div>
-                                <label for="thumbnail" class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all duration-200 group">
-                                    <svg class="w-12 h-12 text-gray-400 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                    <span class="mt-2 text-sm font-medium text-gray-600 group-hover:text-blue-600">Click để chọn ảnh</span>
-                                    <span class="mt-1 text-xs text-gray-400">JPG, PNG, WEBP (Max 5MB)</span>
-                                </label>
-                                <input type="file" 
-                                       name="thumbnail" 
-                                       id="thumbnail" 
-                                       accept="image/jpeg,image/jpg,image/png,image/webp"
-                                       required
-                                       class="hidden">
                                 @error('thumbnail')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                            <!-- Status -->
+                            {{-- Multiple Images --}}
                             <div>
-                                <label for="status" class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Trạng Thái <span class="text-red-500">*</span>
+                                <label for="images" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Ảnh Chi Tiết
+                                    <span class="block text-xs text-gray-500 font-normal mt-1">(Tùy chọn - Có thể chọn nhiều ảnh, mỗi ảnh tối đa 5MB)</span>
                                 </label>
-                                <div class="relative">
-                                    <select name="status" 
-                                            id="status" 
-                                            required
-                                            class="w-full px-4 py-3 pr-10 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all appearance-none bg-white">
-                                        <option value="active" @selected(old('status', 'active') == 'active')>
-                                            ✅ Đang Hoạt Động
-                                        </option>
-                                        <option value="inactive" @selected(old('status') == 'inactive')>
-                                            ⏸️ Tạm Ngừng
-                                        </option>
-                                        <option value="sold_out" @selected(old('status') == 'sold_out')>
-                                            🔴 Hết Chỗ
-                                        </option>
-                                    </select>
-                                    <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                                        </svg>
+                                <div class="mt-2">
+                                    <div class="flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-400 transition-colors" id="imagesDropZone">
+                                        <div class="space-y-2 text-center">
+                                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                            <div class="flex text-sm text-gray-600">
+                                                <label for="images" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                                    <span>Tải lên nhiều ảnh</span>
+                                                    <input id="images" 
+                                                           name="images[]" 
+                                                           type="file" 
+                                                           class="sr-only" 
+                                                           accept="image/jpeg,image/jpg,image/png,image/webp"
+                                                           multiple>
+                                                </label>
+                                                <p class="pl-1">hoặc kéo thả</p>
+                                            </div>
+                                            <p class="text-xs text-gray-500">PNG, JPG, WEBP tới 5MB mỗi ảnh</p>
+                                        </div>
                                     </div>
+                                    <div id="imagesPreview" class="mt-4 grid grid-cols-2 gap-4 hidden"></div>
                                 </div>
-                                @error('status')
+                                @error('images')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                                @error('images.*')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Description Section --}}
+                    <div class="border-t border-gray-200 bg-gray-50 px-6 py-4">
+                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Nội Dung Chi Tiết
+                        </h3>
+                        <p class="mt-1 text-sm text-gray-600">Mô tả chi tiết và lịch trình tour (hỗ trợ Markdown)</p>
+                    </div>
+
+                    <div class="p-6">
+                        <div class="space-y-6">
+                            {{-- Mô tả đầy đủ --}}
+                            <div>
+                                <label for="full_description" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Mô Tả Đầy Đủ <span class="text-red-500">*</span>
+                                    <span class="text-gray-500 font-normal text-xs">(Markdown Editor với Preview)</span>
+                                </label>
+                                <textarea name="full_description" 
+                                          id="full_description" 
+                                          required>{{ old('full_description') }}</textarea>
+                                @error('full_description')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                            <!-- Max People -->
+                            {{-- Lịch trình --}}
                             <div>
-                                <label for="max_people" class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Số Người Tối Đa <span class="text-red-500">*</span>
+                                <label for="itinerary" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Lịch Trình <span class="text-red-500">*</span>
+                                    <span class="text-gray-500 font-normal text-xs">(Markdown Editor với Preview)</span>
                                 </label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                        </svg>
-                                    </div>
-                                    <input type="number" 
-                                           name="max_people" 
-                                           id="max_people" 
-                                           value="{{ old('max_people') }}" 
-                                           required
-                                           min="1"
-                                           max="1000"
-                                           class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                           placeholder="20">
-                                </div>
-                                <p class="mt-2 text-xs text-gray-500 flex items-center">
-                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                                    </svg>
-                                    Tối thiểu 1 người, tối đa 1000 người
-                                </p>
-                                @error('max_people')
+                                <textarea name="itinerary" 
+                                          id="itinerary" 
+                                          required>{{ old('itinerary') }}</textarea>
+                                @error('itinerary')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- Featured -->
-                            <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4">
-                                <div class="flex items-start">
-                                    <div class="flex items-center h-5">
-                                        <input type="checkbox" 
-                                               name="featured" 
-                                               id="featured" 
-                                               value="1" 
-                                               @checked(old('featured'))
-                                               class="w-5 h-5 text-amber-600 border-gray-300 rounded focus:ring-2 focus:ring-amber-500 transition-all">
-                                    </div>
-                                    <div class="ml-3">
-                                        <label for="featured" class="font-semibold text-sm text-gray-900 cursor-pointer">
-                                            ⭐ Tour Nổi Bật
-                                        </label>
-                                        <p class="text-xs text-gray-600 mt-1">
-                                            Tour sẽ được hiển thị ở vị trí ưu tiên trên trang chủ
-                                        </p>
-                                    </div>
-                                </div>
+                    {{-- Form Actions --}}
+                    <div class="border-t border-gray-200 bg-gray-50 px-6 py-4">
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-gray-500">
+                                <span class="text-red-500">*</span> Trường bắt buộc
                             </div>
-
-                            <!-- Action Buttons -->
-                            <div class="pt-6 border-t border-gray-200 space-y-3">
-                                <button type="submit" 
-                                        class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3.5 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center group">
-                                    <svg class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                    </svg>
-                                    Tạo Tour Ngay
-                                </button>
+                            <div class="flex items-center gap-4">
                                 <a href="{{ route('admin.tours.index') }}" 
-                                   class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                   class="inline-flex items-center px-5 py-2.5 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-150">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                     </svg>
                                     Hủy Bỏ
                                 </a>
+                                <button type="submit" 
+                                        class="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                    Tạo Tour Mới
+                                </button>
                             </div>
                         </div>
                     </div>
+                </form>
+            </div>
 
-                    <!-- Help Card -->
-                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6 shadow-sm">
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0">
-                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            </div>
-                            <div class="ml-3">
-                                <h3 class="text-sm font-semibold text-blue-900">Hướng Dẫn</h3>
-                                <ul class="mt-2 text-xs text-blue-800 space-y-1">
-                                    <li>• Điền đầy đủ thông tin bắt buộc (*)</li>
-                                    <li>• Sử dụng Markdown cho mô tả & lịch trình</li>
-                                    <li>• Ảnh đại diện tối đa 5MB</li>
-                                    <li>• Có thể thêm nhiều ảnh tour</li>
-                                </ul>
-                            </div>
+            {{-- Help Section --}}
+            <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div class="flex">
+                    <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-blue-800">Hướng dẫn sử dụng</h3>
+                        <div class="mt-2 text-sm text-blue-700">
+                            <ul class="list-disc list-inside space-y-1">
+                                <li>Điền đầy đủ các trường có dấu <span class="text-red-500">*</span></li>
+                                <li>Ảnh đại diện sẽ hiển thị trên danh sách tour</li>
+                                <li>Sử dụng Markdown để định dạng mô tả và lịch trình (Ctrl + P để xem preview)</li>
+                                <li>Số ngày sẽ tự động tính dựa trên ngày bắt đầu và kết thúc</li>
+                                <li>Tour nổi bật sẽ được ưu tiên hiển thị trên trang chủ</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
-        </form>
+        </div>
     </div>
 
-    <!-- SimpleMDE CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
-    
-    <style>
-        .CodeMirror {
-            height: 350px !important;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.75rem;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .editor-toolbar {
-            border: 1px solid #e5e7eb;
-            border-bottom: none;
-            border-radius: 0.75rem 0.75rem 0 0;
-            background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
-            padding: 8px;
-        }
-        
-        .editor-toolbar button {
-            border-radius: 0.375rem !important;
-            transition: all 0.2s;
-        }
-        
-        .editor-toolbar button:hover {
-            background: #dbeafe !important;
-            border-color: #3b82f6 !important;
-        }
-        
-        .CodeMirror-scroll {
-            min-height: 350px;
-        }
-        
-        .editor-preview, .editor-preview-side {
-            background: white;
-            padding: 1.5rem;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .CodeMirror-fullscreen {
-            z-index: 9999 !important;
-        }
-        
-        .editor-toolbar.fullscreen {
-            z-index: 9999 !important;
-        }
-        
-        .CodeMirror-sided {
-            width: 50% !important;
-        }
-    </style>
-    
-    <!-- SimpleMDE JS -->
+    <!-- SimpleMDE JavaScript -->
     <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
     
     <script>
-        // Character counter for short description
-        const shortDesc = document.getElementById('short_description');
+        // Character count for short description
+        const shortDescTextarea = document.getElementById('short_description');
         const charCount = document.getElementById('charCount');
         
-        if (shortDesc && charCount) {
-            shortDesc.addEventListener('input', function() {
-                charCount.textContent = this.value.length;
-                if (this.value.length > 500) {
-                    charCount.classList.add('text-red-600', 'font-bold');
-                } else {
-                    charCount.classList.remove('text-red-600', 'font-bold');
-                }
-            });
-            charCount.textContent = shortDesc.value.length;
-        }
+        shortDescTextarea.addEventListener('input', function() {
+            const count = this.value.length;
+            charCount.textContent = `${count} / 500`;
+            if (count > 450) {
+                charCount.classList.add('text-red-600');
+                charCount.classList.remove('text-gray-500');
+            } else {
+                charCount.classList.add('text-gray-500');
+                charCount.classList.remove('text-red-600');
+            }
+        });
 
-        // Initialize SimpleMDE for Full Description
+        // Initialize SimpleMDE for Full Description with full toolbar
         const fullDescriptionEditor = new SimpleMDE({
             element: document.getElementById('full_description'),
-            placeholder: "Nhập mô tả đầy đủ về tour (hỗ trợ Markdown)...\n\nVí dụ:\n## Điểm Nổi Bật\n- Điểm 1\n- Điểm 2\n\n## Dịch Vụ Bao Gồm\n- Dịch vụ 1\n- Dịch vụ 2",
             spellChecker: false,
+            forceSync: true, // Force sync with textarea on submit
+            placeholder: "Nhập mô tả đầy đủ về tour...\n\nVí dụ:\n## Giới thiệu\nTour du lịch...\n\n## Điểm nổi bật\n- Điểm 1\n- Điểm 2",
             toolbar: [
-                "bold", "italic", "heading", "|", 
-                "quote", "unordered-list", "ordered-list", "|", 
-                "link", "image", "|", 
-                "preview", "side-by-side", "fullscreen", "|", 
-                "guide"
+                "bold", "italic", "strikethrough", "heading", "heading-smaller", "heading-bigger", "heading-1", "heading-2", "heading-3", "|",
+                "code", "quote", "unordered-list", "ordered-list", "clean-block", "|",
+                "link", "image", "table", "horizontal-rule", "|",
+                "preview", "side-by-side", "fullscreen", "|",
+                "guide", "undo", "redo"
             ],
-            status: ["lines", "words", "cursor"],
-            minHeight: "350px",
+            status: ["autosave", "lines", "words", "cursor"],
+            tabSize: 4,
+            indentWithTabs: false,
+            autofocus: false,
             autosave: {
                 enabled: true,
-                uniqueId: "tour-full-description",
+                uniqueId: "tour_full_description",
                 delay: 1000,
             },
+            renderingConfig: {
+                singleLineBreaks: false,
+                codeSyntaxHighlighting: true,
+            },
+            shortcuts: {
+                toggleBold: "Cmd-B",
+                toggleItalic: "Cmd-I",
+                toggleStrikethrough: "Cmd-Alt-S",
+                toggleCodeBlock: "Cmd-Alt-C",
+                togglePreview: "Cmd-P",
+                toggleSideBySide: "F9",
+                toggleFullScreen: "F11"
+            }
         });
 
-        // Initialize SimpleMDE for Itinerary
+        // Initialize SimpleMDE for Itinerary with full toolbar
         const itineraryEditor = new SimpleMDE({
             element: document.getElementById('itinerary'),
-            placeholder: "Nhập lịch trình chi tiết theo từng ngày...\n\n## Ngày 1: Khởi hành - Đến điểm đến\n\n**Sáng:**\n- 07:00 - Tập trung tại điểm hẹn\n- 08:00 - Khởi hành\n\n**Trưa:**\n- 12:00 - Dùng bữa trưa\n\n**Chiều:**\n- 14:00 - Tham quan điểm A\n- 16:00 - Tham quan điểm B\n\n**Tối:**\n- 18:00 - Nhận phòng khách sạn\n- 19:00 - Dùng bữa tối",
             spellChecker: false,
+            forceSync: true, // Force sync with textarea on submit
+            placeholder: "Nhập lịch trình chi tiết...\n\nVí dụ:\n## Ngày 1: Hà Nội - Đà Nẵng\n**Sáng:**\n- 8:00: Khởi hành từ Hà Nội\n- 10:00: Đến sân bay Đà Nẵng\n\n**Chiều:**\n- 14:00: Tham quan...",
             toolbar: [
-                "bold", "italic", "heading", "|", 
-                "quote", "unordered-list", "ordered-list", "|", 
-                "link", "image", "|", 
-                "preview", "side-by-side", "fullscreen", "|", 
-                "guide"
+                "bold", "italic", "strikethrough", "heading", "heading-smaller", "heading-bigger", "heading-1", "heading-2", "heading-3", "|",
+                "code", "quote", "unordered-list", "ordered-list", "clean-block", "|",
+                "link", "image", "table", "horizontal-rule", "|",
+                "preview", "side-by-side", "fullscreen", "|",
+                "guide", "undo", "redo"
             ],
-            status: ["lines", "words", "cursor"],
-            minHeight: "350px",
+            status: ["autosave", "lines", "words", "cursor"],
+            tabSize: 4,
+            indentWithTabs: false,
+            autofocus: false,
             autosave: {
                 enabled: true,
-                uniqueId: "tour-itinerary",
+                uniqueId: "tour_itinerary",
                 delay: 1000,
             },
+            renderingConfig: {
+                singleLineBreaks: false,
+                codeSyntaxHighlighting: true,
+            },
+            shortcuts: {
+                toggleBold: "Cmd-B",
+                toggleItalic: "Cmd-I",
+                toggleStrikethrough: "Cmd-Alt-S",
+                toggleCodeBlock: "Cmd-Alt-C",
+                togglePreview: "Cmd-P",
+                toggleSideBySide: "F9",
+                toggleFullScreen: "F11"
+            }
         });
 
-        // Thumbnail preview with size validation
+        // Auto calculate duration_days when dates change
+        const startDateInput = document.getElementById('start_date');
+        const endDateInput = document.getElementById('end_date');
+        const durationInput = document.getElementById('duration_days');
+
+        function calculateDuration() {
+            if (startDateInput.value && endDateInput.value) {
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
+                
+                if (endDate >= startDate) {
+                    const diffTime = Math.abs(endDate - startDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                    const diffNights = diffDays - 1;
+                    
+                    durationInput.value = diffDays;
+                    document.getElementById('duration_nights').value = diffNights;
+                    
+                    console.log('Duration calculated:', { days: diffDays, nights: diffNights });
+                } else {
+                    endDateInput.setCustomValidity('Ngày kết thúc phải sau ngày bắt đầu');
+                }
+            }
+        }
+
+        startDateInput.addEventListener('change', calculateDuration);
+        endDateInput.addEventListener('change', calculateDuration);
+
+        // Thumbnail preview
         const thumbnailInput = document.getElementById('thumbnail');
         const thumbnailPreview = document.getElementById('thumbnailPreview');
-        
+
         thumbnailInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
-                if (file.size > 5 * 1024 * 1024) {
-                    alert('Ảnh không được vượt quá 5MB!');
-                    this.value = '';
-                    return;
-                }
-                
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     thumbnailPreview.querySelector('img').src = e.target.result;
@@ -656,119 +701,184 @@
             }
         });
 
-        window.removeThumbnail = function() {
+        function removeThumbnail() {
             thumbnailInput.value = '';
             thumbnailPreview.classList.add('hidden');
-            thumbnailPreview.querySelector('img').src = '';
         }
 
-        // Multiple images drag & drop with validation
-        const dropzone = document.getElementById('dropzone');
+        // Multiple images preview
         const imagesInput = document.getElementById('images');
-        const preview = document.getElementById('preview');
-        let selectedFiles = [];
+        const imagesPreview = document.getElementById('imagesPreview');
 
-        dropzone.addEventListener('click', () => imagesInput.click());
-
-        dropzone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropzone.classList.add('border-blue-500', 'bg-blue-50');
+        imagesInput.addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            if (files.length > 0) {
+                imagesPreview.innerHTML = '';
+                imagesPreview.classList.remove('hidden');
+                
+                files.forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const div = document.createElement('div');
+                        div.className = 'relative';
+                        div.innerHTML = `
+                            <img src="${e.target.result}" class="w-full h-32 object-cover rounded-lg border border-gray-300">
+                            <button type="button" onclick="removeImage(${index})" 
+                                    class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        `;
+                        imagesPreview.appendChild(div);
+                    }
+                    reader.readAsDataURL(file);
+                });
+            }
         });
 
-        dropzone.addEventListener('dragleave', () => {
-            dropzone.classList.remove('border-blue-500', 'bg-blue-50');
-        });
+        function removeImage(index) {
+            const dt = new DataTransfer();
+            const files = Array.from(imagesInput.files);
+            
+            files.forEach((file, i) => {
+                if (i !== index) {
+                    dt.items.add(file);
+                }
+            });
+            
+            imagesInput.files = dt.files;
+            
+            if (dt.files.length === 0) {
+                imagesPreview.classList.add('hidden');
+                imagesPreview.innerHTML = '';
+            } else {
+                imagesInput.dispatchEvent(new Event('change'));
+            }
+        }
 
-        dropzone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropzone.classList.remove('border-blue-500', 'bg-blue-50');
-            const files = Array.from(e.dataTransfer.files).filter(file => 
-                file.type.startsWith('image/')
-            );
-            handleFiles(files);
-        });
-
-        imagesInput.addEventListener('change', (e) => {
-            handleFiles(Array.from(e.target.files));
-        });
-
-        function handleFiles(files) {
-            const validFiles = files.filter(file => {
-                if (file.size > 5 * 1024 * 1024) {
-                    alert(`Ảnh "${file.name}" vượt quá 5MB!`);
+        // Form validation before submit
+        const tourForm = document.getElementById('tourForm');
+        console.log('Tour form element:', tourForm);
+        
+        if (tourForm) {
+            console.log('Attaching submit event listener...');
+            
+            tourForm.addEventListener('submit', function(e) {
+                console.log('=== FORM SUBMIT EVENT TRIGGERED ===');
+                
+                // Sync SimpleMDE content back to textarea before validation
+                if (fullDescriptionEditor && fullDescriptionEditor.value) {
+                    document.getElementById('full_description').value = fullDescriptionEditor.value();
+                    console.log('Synced full_description:', fullDescriptionEditor.value().substring(0, 50));
+                }
+                
+                if (itineraryEditor && itineraryEditor.value) {
+                    document.getElementById('itinerary').value = itineraryEditor.value();
+                    console.log('Synced itinerary:', itineraryEditor.value().substring(0, 50));
+                }
+                
+                const priceAdult = parseFloat(document.getElementById('price_adult').value) || 0;
+                const priceChild = parseFloat(document.getElementById('price_child').value) || 0;
+                const priceInfant = parseFloat(document.getElementById('price_infant').value) || 0;
+                
+                console.log('Prices:', { priceAdult, priceChild, priceInfant });
+                
+                if (priceChild > priceAdult) {
+                    e.preventDefault();
+                    alert('⚠️ Giá trẻ em không nên cao hơn giá người lớn!');
+                    console.log('Validation failed: child > adult');
                     return false;
                 }
+                
+                if (priceInfant > priceChild) {
+                    e.preventDefault();
+                    alert('⚠️ Giá em bé không nên cao hơn giá trẻ em!');
+                    console.log('Validation failed: infant > child');
+                    return false;
+                }
+                
+                console.log('✅ Validation passed, form will submit');
                 return true;
             });
             
-            selectedFiles = [...selectedFiles, ...validFiles];
-            updateDataTransfer();
-            updatePreview();
+            console.log('Event listener attached successfully');
+        } else {
+            console.error('❌ Tour form NOT found!');
         }
-
-        function updatePreview() {
-            preview.innerHTML = '';
-            if (selectedFiles.length === 0) {
-                preview.classList.add('hidden');
-                return;
-            }
-            
-            preview.classList.remove('hidden');
-            selectedFiles.forEach((file, index) => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const div = document.createElement('div');
-                    div.className = 'relative group';
-                    div.innerHTML = `
-                        <img src="${e.target.result}" class="w-full h-32 object-cover rounded-xl shadow-sm border-2 border-gray-200 group-hover:border-blue-500 transition-all">
-                        <button type="button" 
-                                onclick="removeImage(${index})"
-                                class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        </button>
-                        <div class="absolute bottom-2 left-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded">
-                            ${(file.size / 1024).toFixed(0)} KB
-                        </div>
-                    `;
-                    preview.appendChild(div);
+        
+        // Handle button click - make sure it triggers form submit
+        const submitButton = document.querySelector('button[type="submit"]');
+        console.log('Submit button:', submitButton);
+        
+        if (submitButton) {
+            submitButton.addEventListener('click', function(e) {
+                console.log('=== BUTTON CLICKED ===');
+                console.log('Default prevented?', e.defaultPrevented);
+                
+                // Ensure form submits if not prevented
+                if (!e.defaultPrevented && this.form) {
+                    console.log('Manually triggering form submit...');
+                    // Let the normal form submit happen
                 }
-                reader.readAsDataURL(file);
             });
         }
 
-        window.removeImage = function(index) {
-            selectedFiles.splice(index, 1);
-            updateDataTransfer();
-            updatePreview();
+        // Drag and drop for thumbnail
+        const thumbnailDropZone = document.getElementById('thumbnailDropZone');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            thumbnailDropZone.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
         }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            thumbnailDropZone.addEventListener(eventName, () => {
+                thumbnailDropZone.classList.add('border-blue-500', 'bg-blue-50');
+            });
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            thumbnailDropZone.addEventListener(eventName, () => {
+                thumbnailDropZone.classList.remove('border-blue-500', 'bg-blue-50');
+            });
+        });
+        
+        thumbnailDropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            thumbnailInput.files = files;
+            thumbnailInput.dispatchEvent(new Event('change'));
+        });
 
-        function updateDataTransfer() {
-            const dt = new DataTransfer();
-            selectedFiles.forEach(file => dt.items.add(file));
-            imagesInput.files = dt.files;
-        }
-
-        // Auto-calculate duration based on dates
-        const startDateInput = document.getElementById('start_date');
-        const endDateInput = document.getElementById('end_date');
-        const durationInput = document.getElementById('duration_days');
-
-        function calculateDuration() {
-            if (startDateInput.value && endDateInput.value) {
-                const start = new Date(startDateInput.value);
-                const end = new Date(endDateInput.value);
-                const diffTime = Math.abs(end - start);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-                
-                if (diffDays > 0 && diffDays <= 365) {
-                    durationInput.value = diffDays;
-                }
-            }
-        }
-
-        startDateInput.addEventListener('change', calculateDuration);
-        endDateInput.addEventListener('change', calculateDuration);
+        // Drag and drop for multiple images
+        const imagesDropZone = document.getElementById('imagesDropZone');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            imagesDropZone.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            imagesDropZone.addEventListener(eventName, () => {
+                imagesDropZone.classList.add('border-blue-500', 'bg-blue-50');
+            });
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            imagesDropZone.addEventListener(eventName, () => {
+                imagesDropZone.classList.remove('border-blue-500', 'bg-blue-50');
+            });
+        });
+        
+        imagesDropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            imagesInput.files = files;
+            imagesInput.dispatchEvent(new Event('change'));
+        });
     </script>
 </x-admin-layout>

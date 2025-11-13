@@ -34,19 +34,20 @@
                             
                             <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold
                                 {{ $booking->payment_status === 'paid' ? 'bg-green-100 text-green-800' : '' }}
-                                {{ $booking->payment_status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                {{ $booking->payment_status === 'failed' ? 'bg-red-100 text-red-800' : '' }}">
+                                {{ $booking->payment_status === 'awaiting_payment' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                {{ $booking->payment_status === 'processing' ? 'bg-blue-100 text-blue-800' : '' }}
+                                {{ $booking->payment_status === 'payment_failed' ? 'bg-red-100 text-red-800' : '' }}
+                                {{ $booking->payment_status === 'refunded' ? 'bg-purple-100 text-purple-800' : '' }}
+                                {{ $booking->payment_status === 'cancelled' ? 'bg-gray-100 text-gray-800' : '' }}">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                                 </svg>
-                                {{ $booking->payment_status === 'paid' ? 'Đã thanh toán' : '' }}
-                                {{ $booking->payment_status === 'pending' ? 'Chưa thanh toán' : '' }}
-                                {{ $booking->payment_status === 'failed' ? 'Thanh toán thất bại' : '' }}
+                                {{ $booking->status_label }}
                             </span>
                         </div>
                     </div>
                     
-                    @if($booking->payment_status !== 'paid' && $booking->status !== 'cancelled')
+                    @if($booking->canPay())
                         <a href="{{ route('payments.show', $booking) }}" 
                            class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 hover:scale-105">
                             Thanh toán ngay
@@ -159,7 +160,12 @@
             @endif
 
             <!-- Payment Information -->
-            @if($booking->payment)
+            @php
+                $successfulPayment = $booking->getSuccessfulPayment();
+                $latestPayment = $booking->getLatestPayment();
+                $displayPayment = $successfulPayment ?? $latestPayment;
+            @endphp
+            @if($displayPayment)
             <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
                 <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
                     <svg class="w-6 h-6 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -170,22 +176,40 @@
                 <div class="grid md:grid-cols-2 gap-4">
                     <div>
                         <label class="text-sm text-gray-600">Mã thanh toán</label>
-                        <p class="font-mono font-semibold text-gray-900">{{ $booking->payment->payment_code }}</p>
+                        <p class="font-mono font-semibold text-gray-900">{{ $displayPayment->payment_code }}</p>
                     </div>
                     <div>
                         <label class="text-sm text-gray-600">Phương thức</label>
-                        <p class="font-semibold text-gray-900 capitalize">{{ $booking->payment->payment_method }}</p>
+                        <p class="font-semibold text-gray-900 capitalize">{{ $displayPayment->payment_method }}</p>
                     </div>
-                    @if($booking->payment->transaction_id)
+                    <div>
+                        <label class="text-sm text-gray-600">Trạng thái</label>
+                        <p class="font-semibold text-gray-900">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs
+                                {{ $displayPayment->status === 'success' ? 'bg-green-100 text-green-800' : '' }}
+                                {{ $displayPayment->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                {{ $displayPayment->status === 'failed' ? 'bg-red-100 text-red-800' : '' }}
+                                {{ $displayPayment->status === 'refunded' ? 'bg-purple-100 text-purple-800' : '' }}">
+                                {{ ucfirst($displayPayment->status) }}
+                            </span>
+                        </p>
+                    </div>
+                    @if($displayPayment->transaction_id)
                     <div>
                         <label class="text-sm text-gray-600">Mã giao dịch</label>
-                        <p class="font-mono font-semibold text-gray-900">{{ $booking->payment->transaction_id }}</p>
+                        <p class="font-mono font-semibold text-gray-900">{{ $displayPayment->transaction_id }}</p>
                     </div>
                     @endif
-                    @if($booking->payment->paid_at)
+                    @if($displayPayment->paid_at)
                     <div>
                         <label class="text-sm text-gray-600">Thời gian thanh toán</label>
-                        <p class="font-semibold text-gray-900">{{ $booking->payment->paid_at->format('d/m/Y H:i') }}</p>
+                        <p class="font-semibold text-gray-900">{{ $displayPayment->paid_at->format('d/m/Y H:i') }}</p>
+                    </div>
+                    @endif
+                    @if($displayPayment->notes)
+                    <div class="md:col-span-2">
+                        <label class="text-sm text-gray-600">Ghi chú</label>
+                        <p class="text-gray-900">{{ $displayPayment->notes }}</p>
                     </div>
                     @endif
                 </div>
@@ -210,23 +234,23 @@
             </div>
 
             <!-- Action Buttons -->
-            @if($booking->status !== 'cancelled')
             <div class="mt-8 flex gap-4">
-                @if($booking->payment_status !== 'paid')
+                @if($booking->canPay())
                 <a href="{{ route('payments.show', $booking) }}" 
                    class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-4 rounded-xl font-semibold text-center hover:shadow-xl transition-all duration-300 hover:scale-105">
                     Thanh toán ngay
                 </a>
                 @endif
                 
+                @if($booking->canCancel())
                 <form action="{{ route('bookings.cancel', $booking) }}" method="POST" class="flex-1" onsubmit="return confirm('Bạn có chắc muốn hủy đặt tour này?')">
                     @csrf
                     <button type="submit" class="w-full bg-red-600 text-white px-6 py-4 rounded-xl font-semibold hover:bg-red-700 transition-all duration-300">
                         Hủy đặt tour
                     </button>
                 </form>
+                @endif
             </div>
-            @endif
         </div>
     </div>
 </x-client-layout>

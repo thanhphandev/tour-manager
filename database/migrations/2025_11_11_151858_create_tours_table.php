@@ -19,9 +19,9 @@ return new class extends Migration
             $table->text('short_description');
             $table->longText('full_description');
             $table->longText('itinerary');
-            $table->decimal('price_adult', 10, 2)->default(0);
-            $table->decimal('price_child', 10, 2)->default(0);
-            $table->decimal('price_infant', 10, 2)->default(0);
+            $table->decimal('price_adult', 15, 2)->default(0);
+            $table->decimal('price_child', 15, 2)->default(0);
+            $table->decimal('price_infant', 15, 2)->default(0);
             $table->integer('duration_days');
             $table->integer('duration_nights');
             $table->integer('max_people')->nullable();

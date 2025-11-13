@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Payment;
 use App\Mail\PaymentConfirmationMail;
+use App\Services\VNPayService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -122,20 +123,129 @@ class PaymentController extends Controller
     }
 
     /**
-     * Process VNPay payment (placeholder for future)
+     * Process VNPay payment
      */
-    public function processVNPay(Booking $booking)
+    public function processVNPay(Request $request, Booking $booking)
     {
-        // TODO: Implement VNPay integration
-        return redirect()->back()
-            ->with('info', 'VNPay integration đang được phát triển. Vui lòng sử dụng Mock Payment.');
+        // Check if user owns this booking
+        if ($booking->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        // Check if already paid
+        $successfulPayment = $booking->payments()->where('status', 'success')->first();
+        if ($successfulPayment) {
+            return redirect()->route('bookings.success', $booking)
+                ->with('info', 'Đơn đặt tour này đã được thanh toán.');
+        }
+
+        try {
+            // Load tour relationship
+            $booking->load('tour');
+
+            // Create payment record
+            $payment = Payment::create([
+                'booking_id' => $booking->id,
+                'payment_code' => Payment::generatePaymentCode(),
+                'payment_method' => 'vnpay',
+                'amount' => $booking->total_amount,
+                'status' => 'pending',
+            ]);
+
+            // Prepare VNPay data
+            $vnpayService = new VNPayService();
+            $paymentUrl = $vnpayService->createPaymentUrl([
+                'amount' => $booking->total_amount,
+                'txn_ref' => $payment->payment_code,
+                'order_info' => 'Thanh toan tour: ' . $booking->tour->name,
+                'order_type' => 'billpayment',
+                'locale' => 'vn',
+                'ip_addr' => $request->ip(),
+                'bill_email' => $booking->email,
+                'bill_mobile' => $booking->phone,
+                'bill_firstname' => explode(' ', $booking->customer_name)[0] ?? '',
+                'bill_lastname' => substr($booking->customer_name, strpos($booking->customer_name, ' ') + 1) ?: '',
+            ]);
+
+            // Redirect to VNPay
+            return redirect($paymentUrl);
+
+        } catch (\Exception $e) {
+            Log::error('VNPay payment initialization failed: ' . $e->getMessage());
+
+            return redirect()->back()
+                ->with('error', 'Có lỗi xảy ra khi khởi tạo thanh toán VNPay. Vui lòng thử lại.');
+        }
     }
 
     /**
-     * VNPay callback (placeholder for future)
+     * VNPay callback handler
      */
     public function vnpayCallback(Request $request)
     {
-        // TODO: Handle VNPay callback
+        try {
+            $vnpayService = new VNPayService();
+            $result = $vnpayService->validateCallback($request->all());
+
+            if (!$result['success']) {
+                Log::error('VNPay callback validation failed: ' . $result['message']);
+                
+                return redirect()->route('bookings.index')
+                    ->with('error', 'Thanh toán thất bại: ' . $result['message']);
+            }
+
+            // Find payment by payment_code (txn_ref)
+            $payment = Payment::where('payment_code', $result['data']['txn_ref'])->first();
+
+            if (!$payment) {
+                Log::error('Payment not found for txn_ref: ' . $result['data']['txn_ref']);
+                
+                return redirect()->route('bookings.index')
+                    ->with('error', 'Không tìm thấy thông tin thanh toán.');
+            }
+
+            // Check if already processed
+            if ($payment->status === 'success') {
+                return redirect()->route('bookings.success', $payment->booking)
+                    ->with('info', 'Đơn đặt tour này đã được thanh toán.');
+            }
+
+            DB::beginTransaction();
+
+            // Load booking and tour
+            $payment->load(['booking.tour']);
+            $booking = $payment->booking;
+
+            // Prepare transaction data
+            $transactionData = [
+                'bank_code' => $result['data']['bank_code'],
+                'bank_tran_no' => $result['data']['bank_tran_no'],
+                'card_type' => $result['data']['card_type'],
+                'pay_date' => $result['data']['pay_date'],
+                'order_info' => $result['data']['order_info'],
+            ];
+
+            // Mark as success
+            $payment->markAsSuccess($result['data']['transaction_id'], $transactionData);
+
+            // Send confirmation email
+            try {
+                Mail::to($booking->email)->send(new PaymentConfirmationMail($payment));
+            } catch (\Exception $e) {
+                Log::error('Failed to send payment confirmation email: ' . $e->getMessage());
+            }
+
+            DB::commit();
+
+            return redirect()->route('bookings.success', $booking)
+                ->with('success', 'Thanh toán VNPay thành công! Đơn đặt tour của bạn đã được xác nhận.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('VNPay callback processing failed: ' . $e->getMessage());
+
+            return redirect()->route('bookings.index')
+                ->with('error', 'Có lỗi xảy ra khi xử lý thanh toán. Vui lòng liên hệ bộ phận hỗ trợ.');
+        }
     }
 }

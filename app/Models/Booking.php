@@ -177,11 +177,10 @@ class Booking extends Model
         }
 
         // Đã thanh toán
-        if ($this->status === 'confirmed' && $this->getSuccessfulPayment()) {
-            $payment = $this->getSuccessfulPayment();
-            
+        $successfulPayment = $this->getSuccessfulPayment();
+        if ($this->status === 'confirmed' && $successfulPayment) {
             // Đã hoàn tiền
-            if ($payment->status === 'refunded') {
+            if ($successfulPayment->status === 'refunded') {
                 return 'refunded';
             }
             

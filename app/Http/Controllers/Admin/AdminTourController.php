@@ -35,7 +35,6 @@ class AdminTourController extends Controller
     public function store(Request $request)
     {
         try {
-            Log::info('Received request to create tour: ', $request->all());
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'destination_id' => 'required|exists:destinations,id',
@@ -46,6 +45,7 @@ class AdminTourController extends Controller
                 'price_child' => 'required|numeric|min:0',
                 'price_infant' => 'required|numeric|min:0',
                 'duration_days' => 'required|integer|min:1|max:365',
+                'duration_nights' => 'required|integer|min:0|max:364',
                 'max_people' => 'required|integer|min:1|max:1000',
                 'start_date' => 'required|date|after_or_equal:today',
                 'end_date' => 'required|date|after:start_date',
@@ -73,6 +73,9 @@ class AdminTourController extends Controller
                 'duration_days.integer' => 'Số ngày phải là số nguyên',
                 'duration_days.min' => 'Số ngày ít nhất là 1',
                 'duration_days.max' => 'Số ngày tối đa là 365',
+                'duration_nights.required' => 'Số đêm không được để trống',
+                'duration_nights.integer' => 'Số đêm phải là số nguyên',
+                'duration_nights.min' => 'Số đêm ít nhất là 0',
                 'max_people.required' => 'Số người tối đa không được để trống',
                 'max_people.integer' => 'Số người phải là số nguyên',
                 'max_people.min' => 'Số người ít nhất là 1',
@@ -95,8 +98,6 @@ class AdminTourController extends Controller
             }
 
             // Create tour
-
-            Log::info('Creating tour with data: ', $validated);
             $tour = Tour::create($validated);
 
             // Upload multiple images
@@ -113,8 +114,6 @@ class AdminTourController extends Controller
                     $order++;
                 }
             }
-
-            Log::info('Tour created successfully with ID: ' . $tour->id);
 
             return redirect()
                 ->route('admin.tours.index')
@@ -158,12 +157,16 @@ class AdminTourController extends Controller
                 'price_child' => 'required|numeric|min:0',
                 'price_infant' => 'required|numeric|min:0',
                 'duration_days' => 'required|integer|min:1|max:365',
+                'duration_nights' => 'required|integer|min:0|max:364',
                 'max_people' => 'required|integer|min:1|max:1000',
                 'start_date' => 'nullable|date',
                 'end_date' => 'nullable|date|after:start_date',
                 'status' => 'required|in:active,inactive,sold_out',
                 'thumbnail' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
                 'featured' => 'nullable|boolean',
+                'delete_images' => 'nullable|array',
+                'delete_images.*' => 'exists:tour_images,id',
+                'images.*' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
             ], [
                 'name.required' => 'Tên tour không được để trống',
                 'destination_id.required' => 'Vui lòng chọn điểm đến',
@@ -186,6 +189,36 @@ class AdminTourController extends Controller
             }
 
             $tour->update($validated);
+
+            // Handle deleting old images
+            if ($request->has('delete_images') && is_array($request->delete_images)) {
+                foreach ($request->delete_images as $imageId) {
+                    $image = $tour->images()->find($imageId);
+                    if ($image) {
+                        // Delete file from storage
+                        Storage::disk('public')->delete($image->image_path);
+                        // Delete database record
+                        $image->delete();
+                    }
+                }
+            }
+
+            // Handle uploading new images
+            if ($request->hasFile('images')) {
+                // Get the current max order
+                $maxOrder = $tour->images()->max('order') ?? 0;
+                
+                foreach ($request->file('images') as $image) {
+                    $path = $image->store('tours/images', 'public');
+                    $maxOrder++;
+                    $tour->images()->create([
+                        'image_path' => $path,
+                        'alt_text' => $tour->name,
+                        'order' => $maxOrder,
+                        'is_primary' => false,
+                    ]);
+                }
+            }
 
             return redirect()
                 ->route('admin.tours.index')

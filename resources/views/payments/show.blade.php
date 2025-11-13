@@ -32,7 +32,6 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                             </svg>
                                             VNPay
-                                            <span class="ml-2 text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Sắp ra mắt</span>
                                         </div>
                                     </button>
                                 </nav>
@@ -147,19 +146,116 @@
                             </form>
                         </div>
 
-                        <!-- VNPay Payment (Coming Soon) -->
+                        <!-- VNPay Payment -->
                         <div id="payment-vnpay" class="payment-content hidden">
-                            <div class="text-center py-12">
-                                <svg class="w-24 h-24 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                <h3 class="text-xl font-semibold text-gray-900 mb-2">VNPay Đang Phát Triển</h3>
-                                <p class="text-gray-600 mb-6">Tính năng thanh toán qua VNPay sẽ sớm ra mắt. Hiện tại vui lòng sử dụng phương thức Mock Payment.</p>
-                                <button onclick="showPaymentMethod('mock')" 
-                                        class="inline-flex items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                    Chuyển sang Mock Payment
+                            <form action="{{ route('payments.process.vnpay', $booking) }}" method="POST" class="space-y-6">
+                                @csrf
+
+                                <!-- VNPay Logo & Info -->
+                                <div class="text-center py-6 border-b border-gray-200">
+                                    <div class="inline-flex items-center justify-center w-20 h-20 bg-blue-100 rounded-full mb-4">
+                                        <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-900 mb-2">Thanh Toán qua VNPay</h3>
+                                    <p class="text-gray-600 text-sm">Bạn sẽ được chuyển đến cổng thanh toán VNPay để hoàn tất giao dịch</p>
+                                </div>
+
+                                <!-- Payment Info -->
+                                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 space-y-4">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-700 font-medium">Số tiền thanh toán:</span>
+                                        <span class="text-2xl font-bold text-indigo-600">{{ number_format($booking->total_amount) }} đ</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-gray-600">Mã đặt chỗ:</span>
+                                        <span class="font-semibold text-gray-900">{{ $booking->booking_code }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-gray-600">Tour:</span>
+                                        <span class="font-semibold text-gray-900 text-right">{{ Str::limit($booking->tour->name, 30) }}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Supported Banks -->
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-700 mb-3">Ngân hàng hỗ trợ</h4>
+                                    <div class="grid grid-cols-4 gap-3">
+                                        <div class="bg-white border-2 border-gray-200 rounded-lg p-3 text-center hover:border-blue-500 transition">
+                                            <div class="text-xs font-medium text-gray-700">Vietcombank</div>
+                                        </div>
+                                        <div class="bg-white border-2 border-gray-200 rounded-lg p-3 text-center hover:border-blue-500 transition">
+                                            <div class="text-xs font-medium text-gray-700">BIDV</div>
+                                        </div>
+                                        <div class="bg-white border-2 border-gray-200 rounded-lg p-3 text-center hover:border-blue-500 transition">
+                                            <div class="text-xs font-medium text-gray-700">Techcombank</div>
+                                        </div>
+                                        <div class="bg-white border-2 border-gray-200 rounded-lg p-3 text-center hover:border-blue-500 transition">
+                                            <div class="text-xs font-medium text-gray-700">ACB</div>
+                                        </div>
+                                        <div class="bg-white border-2 border-gray-200 rounded-lg p-3 text-center hover:border-blue-500 transition">
+                                            <div class="text-xs font-medium text-gray-700">VietinBank</div>
+                                        </div>
+                                        <div class="bg-white border-2 border-gray-200 rounded-lg p-3 text-center hover:border-blue-500 transition">
+                                            <div class="text-xs font-medium text-gray-700">Agribank</div>
+                                        </div>
+                                        <div class="bg-white border-2 border-gray-200 rounded-lg p-3 text-center hover:border-blue-500 transition">
+                                            <div class="text-xs font-medium text-gray-700">MB Bank</div>
+                                        </div>
+                                        <div class="bg-white border-2 border-gray-200 rounded-lg p-3 text-center hover:border-blue-500 transition">
+                                            <div class="text-xs font-medium text-gray-700">+ Khác</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Important Notice -->
+                                <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
+                                    <div class="flex items-start">
+                                        <svg class="w-5 h-5 text-amber-500 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                        </svg>
+                                        <div>
+                                            <p class="text-sm font-medium text-amber-800">Lưu ý quan trọng</p>
+                                            <ul class="text-xs text-amber-700 mt-2 space-y-1 list-disc list-inside">
+                                                <li>Bạn sẽ được chuyển đến trang thanh toán VNPay</li>
+                                                <li>Vui lòng không đóng trình duyệt cho đến khi hoàn tất thanh toán</li>
+                                                <li>Sau khi thanh toán, bạn sẽ được chuyển về trang xác nhận</li>
+                                                <li>Nếu có vấn đề, vui lòng liên hệ bộ phận hỗ trợ</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Security Info -->
+                                <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg">
+                                    <div class="flex items-start">
+                                        <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                        </svg>
+                                        <div>
+                                            <p class="text-sm font-medium text-green-800">Thanh toán an toàn & bảo mật</p>
+                                            <p class="text-xs text-green-700 mt-1">Giao dịch được mã hóa SSL 256-bit. Thông tin của bạn hoàn toàn an toàn.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <button type="submit" 
+                                        class="w-full flex justify-center items-center py-4 px-6 border border-transparent rounded-lg shadow-lg text-base font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-[1.02]">
+                                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                    </svg>
+                                    Thanh Toán qua VNPay {{ number_format($booking->total_amount) }} đ
                                 </button>
-                            </div>
+
+                                <div class="text-center">
+                                    <button type="button" onclick="showPaymentMethod('mock')" 
+                                            class="text-sm text-gray-600 hover:text-gray-800 underline">
+                                        Hoặc sử dụng Mock Payment
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>

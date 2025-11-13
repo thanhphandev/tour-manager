@@ -53,17 +53,19 @@ class HomeController extends Controller
         // Price filter (keyword)
         if ($request->filled('price')) {
             switch ($request->price) {
-                case 'under-1m':
-                    $query->where('price_adult', '<=', 1000000);
-                    break;
-                case 'under-2m':
-                    $query->where('price_adult', '<=', 2000000);
-                    break;
                 case 'under-5m':
                     $query->where('price_adult', '<=', 5000000);
                     break;
-                case 'under-10m':
-                    $query->where('price_adult', '<=', 10000000);
+                case '5m-10m':
+                    $query->where('price_adult', '<=', 10000000)
+                          ->where('price_adult', '>', 5000000);
+                    break;
+                case '10m-20m':
+                    $query->where('price_adult', '<=', 20000000)
+                          ->where('price_adult', '>', 10000000);
+                    break;
+                case 'over-20m':
+                    $query->where('price_adult', '>', 20000000);
                     break;
             }
         }

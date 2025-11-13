@@ -22,13 +22,13 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
-                <a href="{{ route('home') }}" class="flex items-center space-x-2 group">
-                    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-1.5 rounded-lg">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                    <span class="text-xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 text-transparent bg-clip-text">
+                <a href="{{ route('home') }}" class="flex items-center space-x-3 group">
+                    <!-- Logo Image -->
+                    <img src="{{ asset('storage/' . 'images/logo.png') }}" 
+                         alt="TravelGo Logo" 
+                         class="w-12 h-12 object-contain transition-transform group-hover:scale-105 rounded-2xl" />
+                    <!-- Brand Name -->
+                    <span class="text-xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 text-transparent bg-clip-text group-hover:from-indigo-700 group-hover:to-purple-700 transition-all">
                         TravelGo
                     </span>
                 </a>

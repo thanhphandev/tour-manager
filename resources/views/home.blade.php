@@ -51,10 +51,10 @@
                                 </svg>
                                 <select name="price" class="w-full pl-12 pr-4 py-4 rounded-xl border-0 focus:ring-2 focus:ring-indigo-500 text-gray-900 font-medium appearance-none bg-white">
                                     <option value="">Giá tour</option>
-                                    <option value="under-1m">Dưới 1 triệu</option>
-                                    <option value="under-2m">Dưới 2 triệu</option>
                                     <option value="under-5m">Dưới 5 triệu</option>
-                                    <option value="under-10m">Dưới 10 triệu</option>
+                                    <option value="5m-10m">5 triệu - 10 triệu</option>
+                                    <option value="10m-20m">10 triệu - 20 triệu</option>
+                                    <option value="over-20m">Trên 20 triệu</option>
                                 </select>
                             </div>
                         </div>

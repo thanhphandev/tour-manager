@@ -88,7 +88,26 @@
                                 </svg>
                                 Số Người
                             </dt>
-                            <dd class="text-sm font-medium text-gray-900">{{ $booking->number_of_people }} người</dd>
+                            <dd class="text-sm font-medium text-gray-900">
+                                <div class="space-y-1">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">👨‍👩‍👧‍👦 Người lớn:</span>
+                                        <span class="font-bold text-indigo-600">{{ $booking->adults }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">👶 Trẻ em:</span>
+                                        <span class="font-bold text-blue-600">{{ $booking->children }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">🍼 Em bé:</span>
+                                        <span class="font-bold text-green-600">{{ $booking->infants }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center pt-2 border-t border-gray-300">
+                                        <span class="text-gray-900 font-semibold">Tổng:</span>
+                                        <span class="font-bold text-gray-900">{{ $booking->total_people }}</span>
+                                    </div>
+                                </div>
+                            </dd>
                         </div>
                         <div class="md:col-span-2 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border-2 border-green-200">
                             <dt class="text-xs font-medium text-green-700 uppercase mb-1">
@@ -98,7 +117,7 @@
                                 Tổng Tiền
                             </dt>
                             <dd class="text-2xl font-black text-green-700">
-                                {{ number_format($booking->total_price, 0, ',', '.') }} <span class="text-lg">VND</span>
+                                {{ number_format($booking->total_amount, 0, ',', '.') }} <span class="text-lg">VND</span>
                             </dd>
                         </div>
                     </dl>
@@ -141,7 +160,7 @@
                             </svg>
                             <div class="flex-1 min-w-0">
                                 <dt class="text-xs font-medium text-gray-500">Email</dt>
-                                <dd class="text-sm text-gray-900 truncate">{{ $booking->user->email }}</dd>
+                                <dd class="text-sm text-gray-900 truncate">{{ $booking->email }}</dd>
                             </div>
                         </div>
                         <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
@@ -150,7 +169,7 @@
                             </svg>
                             <div class="flex-1">
                                 <dt class="text-xs font-medium text-gray-500">Số Điện Thoại</dt>
-                                <dd class="text-sm text-gray-900">{{ $booking->user->phone ?? 'Chưa cập nhật' }}</dd>
+                                <dd class="text-sm text-gray-900">{{ $booking->phone ?? 'Chưa cập nhật' }}</dd>
                             </div>
                         </div>
                         <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
@@ -202,7 +221,7 @@
                                 </div>
                                 <div class="bg-purple-50 rounded-lg p-3">
                                     <dt class="text-xs font-medium text-purple-700">Giá Trung Bình</dt>
-                                    <dd class="text-sm font-semibold text-purple-900">{{ number_format($booking->total_price / $booking->total_people, 0, ',', '.') }} VND/người</dd>
+                                    <dd class="text-sm font-semibold text-purple-900">{{ number_format($booking->total_amount / $booking->total_people, 0, ',', '.') }} VND/người</dd>
                                 </div>
                             </dl>
                             <a href="{{ route('admin.tours.show', $booking->tour) }}" 
