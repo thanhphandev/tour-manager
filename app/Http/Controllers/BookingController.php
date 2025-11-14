@@ -136,7 +136,17 @@ class BookingController extends Controller
 
         $booking->load(['tour.destination', 'tour.images', 'payments']);
 
-        return view('bookings.show', compact('booking'));
+        // Check if user can write review
+        $canReview = false;
+        if (auth()->check() && !auth()->user()->isAdmin()) {
+            $hasBooking = $booking->isPaid() && $booking->status === 'confirmed';
+            $hasReviewed = auth()->user()->reviews()
+                ->where('tour_id', $booking->tour_id)
+                ->exists();
+            $canReview = $hasBooking && !$hasReviewed;
+        }
+
+        return view('bookings.show', compact('booking', 'canReview'));
     }
 
     /**
@@ -185,7 +195,10 @@ class BookingController extends Controller
 
         $bookings = $query->latest()->paginate(10)->withQueryString();
 
-        return view('bookings.history', compact('bookings'));
+        // Get user's reviewed tour IDs
+        $reviewedTourIds = auth()->user()->reviews()->pluck('tour_id')->toArray();
+
+        return view('bookings.history', compact('bookings', 'reviewedTourIds'));
     }
 
     /**

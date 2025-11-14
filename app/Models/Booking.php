@@ -30,6 +30,14 @@ class Booking extends Model
     ];
 
     /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName()
+    {
+        return 'booking_code';
+    }
+
+    /**
      * Boot the model.
      */
     protected static function boot()

@@ -27,6 +27,14 @@ class Payment extends Model
     ];
 
     /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName()
+    {
+        return 'payment_code';
+    }
+
+    /**
      * Get the booking that owns the payment.
      */
     public function booking()

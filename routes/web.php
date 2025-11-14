@@ -47,17 +47,17 @@ Route::prefix('destinations')->group(function () {
 // ----- Bookings -----
 Route::prefix('bookings')->middleware('auth')->group(function () {
     Route::get('/history', [BookingController::class, 'history'])->name('bookings.history');
-    Route::get('/{booking}', [BookingController::class, 'show'])->name('bookings.show');
-    Route::get('/{booking}/success', [BookingController::class, 'success'])->name('bookings.success');
-    Route::post('/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
+    Route::get('/{booking:booking_code}', [BookingController::class, 'show'])->name('bookings.show');
+    Route::get('/{booking:booking_code}/success', [BookingController::class, 'success'])->name('bookings.success');
+    Route::post('/{booking:booking_code}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
 });
 
 // ----- Payments -----
 Route::prefix('payments')->middleware('auth')->group(function () {
-    Route::get('/{booking}', [PaymentController::class, 'show'])->name('payments.show');
-    Route::post('/{booking}/mock', [PaymentController::class, 'processMock'])->name('payments.process.mock');
-    Route::post('/{booking}/vnpay', [PaymentController::class, 'processVNPay'])->name('payments.process.vnpay');
-    Route::post('/{booking}/paypal', [PaymentController::class, 'processPayPal'])->name('payments.process.paypal');
+    Route::get('/{booking:booking_code}', [PaymentController::class, 'show'])->name('payments.show');
+    Route::post('/{booking:booking_code}/mock', [PaymentController::class, 'processMock'])->name('payments.process.mock');
+    Route::post('/{booking:booking_code}/vnpay', [PaymentController::class, 'processVNPay'])->name('payments.process.vnpay');
+    Route::post('/{booking:booking_code}/paypal', [PaymentController::class, 'processPayPal'])->name('payments.process.paypal');
     
     // Callbacks
     Route::get('/vnpay/callback', [PaymentController::class, 'vnpayCallback'])->name('payments.vnpay.callback');
@@ -65,7 +65,7 @@ Route::prefix('payments')->middleware('auth')->group(function () {
     Route::get('/paypal/cancel', [PaymentController::class, 'paypalCancel'])->name('payments.paypal.cancel');
     
     // Error page
-    Route::get('/{booking}/error', [PaymentController::class, 'error'])->name('payments.error');
+    Route::get('/{booking:booking_code}/error', [PaymentController::class, 'error'])->name('payments.error');
 });
 
 // ----- Reviews -----

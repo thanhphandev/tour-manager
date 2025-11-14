@@ -22,6 +22,14 @@ class Destination extends Model
         'is_active' => 'boolean',
     ];
 
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
     public function getDescriptionHtmlAttribute()
     {
         if (empty($this->description)) {
