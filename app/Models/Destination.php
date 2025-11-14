@@ -22,6 +22,15 @@ class Destination extends Model
         'is_active' => 'boolean',
     ];
 
+    public function getDescriptionHtmlAttribute()
+    {
+        if (empty($this->description)) {
+            return '';
+        }
+        
+        return app(\App\Services\MarkdownService::class)->toHtml($this->description);
+    }
+
     public function tours()
     {
         return $this->hasMany(Tour::class);

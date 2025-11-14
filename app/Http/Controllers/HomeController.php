@@ -12,11 +12,13 @@ class HomeController extends Controller
     {
         $featuredTours = Tour::where('featured', true)
             ->where('status', 'active')
+            ->where('max_people', '>', 0)
             ->with('destination', 'primaryImage')
             ->limit(6)
             ->get();
 
         $latestTours = Tour::where('status', 'active')
+            ->where('max_people', '>', 0)
             ->with('destination', 'primaryImage')
             ->latest()
             ->limit(6)
@@ -29,6 +31,7 @@ class HomeController extends Controller
     {
         $query = Tour::query()
             ->where('status', 'active')
+            ->where('max_people', '>', 0)
             ->with(['destination', 'primaryImage']);
 
         // Search text (tour name or destination name)
@@ -119,6 +122,7 @@ class HomeController extends Controller
     {
         $tours = $destination->tours()
             ->where('status', 'active')
+            ->where('max_people', '>', 0)
             ->with('primaryImage')
             ->paginate(12);
 
