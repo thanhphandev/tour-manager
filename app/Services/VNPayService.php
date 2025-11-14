@@ -26,6 +26,9 @@ class VNPayService
      */
     public function createPaymentUrl(array $data): string
     {
+        // Remove special characters from order info (VNPay requirement: Vietnamese without accents and no special chars)
+        $orderInfo = str_replace('-', ' ', \Illuminate\Support\Str::slug($data['order_info'], ' '));
+        
         $vnpData = [
             'vnp_Version' => '2.1.0',
             'vnp_Command' => 'pay',
@@ -33,7 +36,7 @@ class VNPayService
             'vnp_Amount' => $data['amount'] * 100, // VNPay uses smallest currency unit
             'vnp_CurrCode' => 'VND',
             'vnp_TxnRef' => $data['txn_ref'],
-            'vnp_OrderInfo' => $data['order_info'],
+            'vnp_OrderInfo' => $orderInfo,
             'vnp_OrderType' => $data['order_type'] ?? 'other',
             'vnp_Locale' => $data['locale'] ?? 'vn',
             'vnp_ReturnUrl' => $this->returnUrl,
@@ -41,49 +44,60 @@ class VNPayService
             'vnp_CreateDate' => date('YmdHis'),
         ];
 
-        // Add optional fields if provided
-        if (isset($data['bank_code'])) {
+        // Add optional fields if provided (ONLY if not empty)
+        if (!empty($data['bank_code'])) {
             $vnpData['vnp_BankCode'] = $data['bank_code'];
         }
 
-        if (isset($data['bill_email'])) {
+        if (!empty($data['bill_email'])) {
             $vnpData['vnp_Bill_Email'] = $data['bill_email'];
         }
 
-        if (isset($data['bill_mobile'])) {
+        if (!empty($data['bill_mobile'])) {
             $vnpData['vnp_Bill_Mobile'] = $data['bill_mobile'];
         }
 
-        if (isset($data['bill_firstname'])) {
+        if (!empty($data['bill_firstname'])) {
             $vnpData['vnp_Bill_FirstName'] = $data['bill_firstname'];
         }
 
-        if (isset($data['bill_lastname'])) {
+        if (!empty($data['bill_lastname'])) {
             $vnpData['vnp_Bill_LastName'] = $data['bill_lastname'];
         }
 
         // Sort data by key
         ksort($vnpData);
 
-        // Build query string
-        $query = '';
+        // Build hash data and query string
+        $hashdata = "";
+        $query = "";
         $i = 0;
-        $hashdata = '';
         
         foreach ($vnpData as $key => $value) {
-            if ($i == 1) {
-                $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
-            } else {
-                $hashdata .= urlencode($key) . "=" . urlencode($value);
-                $i = 1;
+            // Skip empty values
+            if (strlen($value) > 0) {
+                if ($i == 1) {
+                    $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
+                } else {
+                    $hashdata .= urlencode($key) . "=" . urlencode($value);
+                    $i = 1;
+                }
+                $query .= urlencode($key) . "=" . urlencode($value) . '&';
             }
-            $query .= urlencode($key) . "=" . urlencode($value) . '&';
         }
 
         // Generate secure hash
-        $vnpUrl = $this->url . "?" . $query;
         $vnpSecureHash = hash_hmac('sha512', $hashdata, $this->hashSecret);
-        $vnpUrl .= 'vnp_SecureHash=' . $vnpSecureHash;
+        $vnpUrl = $this->url . "?" . $query . 'vnp_SecureHash=' . $vnpSecureHash;
+
+        // Debug logging
+        Log::info('VNPay Payment URL Creation', [
+            'tmn_code' => $this->tmnCode,
+            'hash_secret' => substr($this->hashSecret, 0, 10) . '...',
+            'hash_data' => $hashdata,
+            'secure_hash' => $vnpSecureHash,
+            'full_url' => $vnpUrl,
+        ]);
 
         return $vnpUrl;
     }
@@ -111,16 +125,27 @@ class VNPayService
         $i = 0;
         $hashData = '';
         foreach ($inputData as $key => $value) {
-            if ($i == 1) {
-                $hashData = $hashData . '&' . urlencode($key) . "=" . urlencode($value);
-            } else {
-                $hashData = $hashData . urlencode($key) . "=" . urlencode($value);
-                $i = 1;
+            // Skip empty values
+            if (strlen($value) > 0) {
+                if ($i == 1) {
+                    $hashData = $hashData . '&' . urlencode($key) . "=" . urlencode($value);
+                } else {
+                    $hashData = $hashData . urlencode($key) . "=" . urlencode($value);
+                    $i = 1;
+                }
             }
         }
 
         // Calculate secure hash
         $secureHash = hash_hmac('sha512', $hashData, $this->hashSecret);
+        
+        // Debug log
+        Log::info('VNPay Callback Validation', [
+            'hash_data' => $hashData,
+            'calculated_hash' => $secureHash,
+            'received_hash' => $vnpSecureHash,
+            'match' => $secureHash === $vnpSecureHash,
+        ]);
 
         // Validate hash
         if ($secureHash !== $vnpSecureHash) {

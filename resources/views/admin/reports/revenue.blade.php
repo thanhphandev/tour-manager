@@ -71,14 +71,14 @@
             </div>
         </div>
 
-        <!-- Revenue by Provider -->
+        <!-- Revenue by Payment Method -->
         <div class="bg-white rounded-lg shadow p-6">
             <h3 class="text-lg font-bold text-gray-900 mb-4">Doanh Thu Theo Phương Thức Thanh Toán</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                @foreach($revenueByProvider as $provider)
+                @foreach($revenueByProvider as $payment)
                     <div class="p-4 bg-gray-50 rounded-lg">
-                        <p class="text-sm text-gray-500">{{ strtoupper($provider->provider) }}</p>
-                        <p class="text-2xl font-bold text-gray-900 mt-2">{{ number_format($provider->total) }}đ</p>
+                        <p class="text-sm text-gray-500">{{ strtoupper($payment->payment_method) }}</p>
+                        <p class="text-2xl font-bold text-gray-900 mt-2">{{ number_format($payment->total) }}đ</p>
                     </div>
                 @endforeach
             </div>

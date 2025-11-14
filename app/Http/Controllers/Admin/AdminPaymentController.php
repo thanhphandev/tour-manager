@@ -87,6 +87,12 @@ class AdminPaymentController extends Controller
                 'status' => 'cancelled',
             ]);
 
+            // Restore max_people slots when refunding
+            $booking = $payment->booking;
+            if ($booking->tour->max_people !== null) {
+                $booking->tour->increment('max_people', $booking->total_people);
+            }
+
             // Log activity
             ActivityLog::create([
                 'user_id' => auth()->id(),
@@ -99,6 +105,7 @@ class AdminPaymentController extends Controller
                     'booking_code' => $payment->booking->booking_code,
                     'amount' => $payment->amount,
                     'reason' => $request->reason,
+                    'restored_slots' => $booking->total_people,
                 ],
             ]);
 

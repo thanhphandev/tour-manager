@@ -52,15 +52,21 @@ class BookingController extends Controller
         if (!$tour->isAvailable()) {
             return back()->with('error', 'Tour này hiện không khả dụng để đặt.');
         }
-
-        // Check available slots
-        if (!$tour->hasAvailableSlots($totalPeople)) {
-            return back()->with('error', 'Tour không đủ chỗ trống cho số lượng người bạn yêu cầu.');
-        }
-
+        
         DB::beginTransaction();
 
         try {
+            // Double-check available slots with lock to prevent race condition
+            // Use FOR UPDATE lock to prevent concurrent bookings
+            $currentMaxPeople = DB::table('tours')
+                ->where('id', $tour->id)
+                ->lockForUpdate()
+                ->value('max_people');
+
+            if ($currentMaxPeople !== null && $currentMaxPeople < $totalPeople) {
+                throw new \Exception('Tour không đủ chỗ trống.');
+            }
+
             // Create booking
             $booking = Booking::create([
                 'user_id' => auth()->id(),
@@ -77,6 +83,11 @@ class BookingController extends Controller
                 'total_amount' => $this->calculateTotalAmount($tour, $validated),
             ]);
 
+            // Decrement max_people to reserve slots (prevent race condition)
+            if ($currentMaxPeople !== null) {
+                $tour->decrement('max_people', $totalPeople);
+            }
+
             // Log activity
             \App\Models\ActivityLog::create([
                 'user_id' => auth()->id(),
@@ -87,6 +98,7 @@ class BookingController extends Controller
                     'tour_id' => $tour->id,
                     'tour_name' => $tour->name,
                     'total_amount' => $booking->total_amount,
+                    'reserved_slots' => $totalPeople,
                 ],
             ]);
 

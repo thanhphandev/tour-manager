@@ -129,12 +129,17 @@ class Booking extends Model
             return false;
         }
 
-        // Có thể hủy nếu chưa thanh toán
+        // Không thể hủy sau 24 giờ kể từ khi đặt
+        if ($this->created_at->lt(now()->subHours(24))) {
+            return false;
+        }
+
+        // Có thể hủy nếu chưa thanh toán (trong vòng 24h)
         if ($this->status === 'pending') {
             return true;
         }
 
-        // Có thể hủy nếu đã thanh toán nhưng chưa đến ngày tour
+        // Có thể hủy nếu đã thanh toán nhưng chưa đến ngày tour (trong vòng 24h)
         if ($this->status === 'confirmed' && $this->tour->start_date) {
             return $this->tour->start_date > now();
         }
@@ -248,6 +253,11 @@ class Booking extends Model
 
         $this->update(['status' => 'cancelled']);
 
+        // Restore max_people slots when cancelling
+        if ($this->tour->max_people !== null) {
+            $this->tour->increment('max_people', $this->total_people);
+        }
+
         // Log activity
         ActivityLog::create([
             'user_id' => auth()->id(),
@@ -256,6 +266,7 @@ class Booking extends Model
             'properties' => [
                 'booking_id' => $this->id,
                 'tour_name' => $this->tour->name,
+                'restored_slots' => $this->total_people,
             ],
         ]);
 
