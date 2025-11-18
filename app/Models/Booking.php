@@ -127,32 +127,35 @@ class Booking extends Model
         return $this->status === 'pending' && !$this->isPaid();
     }
 
-    /**
-     * Check if booking can be cancelled.
-     */
-    public function canCancel()
+    public function getCancellationError(): ?string
     {
-        // Không thể hủy nếu đã bị hủy rồi
         if ($this->status === 'cancelled') {
-            return false;
+            return 'Đơn đặt chỗ này đã bị hủy trước đó.';
         }
 
-        // Không thể hủy sau 24 giờ kể từ khi đặt
+        if ($this->status === 'completed') {
+            return 'Tour đã hoàn thành, không thể hủy.';
+        }
+
         if ($this->created_at->lt(now()->subHours(24))) {
-            return false;
+            return 'Đã quá thời hạn 24 giờ kể từ khi đặt, bạn không thể hủy miễn phí.';
         }
 
-        // Có thể hủy nếu chưa thanh toán (trong vòng 24h)
-        if ($this->status === 'pending') {
-            return true;
+        if ($this->tour->start_date && $this->tour->start_date->lte(now())) {
+            return 'Tour đã khởi hành hoặc đã kết thúc, không thể hủy.';
         }
 
-        // Có thể hủy nếu đã thanh toán nhưng chưa đến ngày tour (trong vòng 24h)
-        if ($this->status === 'confirmed' && $this->tour->start_date) {
-            return $this->tour->start_date > now();
+        if (!in_array($this->status, ['pending', 'confirmed'])) {
+            return 'Trạng thái đơn hàng không hợp lệ để thực hiện hủy.';
         }
 
-        return false;
+        return null;
+    }
+
+
+    public function canCancel(): bool
+    {
+        return $this->getCancellationError() === null;
     }
 
     /**
@@ -253,33 +256,25 @@ class Booking extends Model
     /**
      * Cancel the booking.
      */
-    public function cancel()
-    {
-        if (!$this->canCancel()) {
-            return false;
-        }
+    // app/Models/Booking.php
 
-        $this->update(['status' => 'cancelled']);
-
-        // Restore max_people slots when cancelling
-        if ($this->tour->max_people !== null) {
-            $this->tour->increment('max_people', $this->total_people);
-        }
-
-        // Log activity
-        ActivityLog::create([
-            'user_id' => auth()->id(),
-            'action' => 'cancelled_booking',
-            'description' => "Đã hủy đặt chỗ #{$this->booking_code}",
-            'properties' => [
-                'booking_id' => $this->id,
-                'tour_name' => $this->tour->name,
-                'restored_slots' => $this->total_people,
-            ],
-        ]);
-
-        return true;
+public function cancel()
+{
+    if (!$this->canCancel()) {
+        return false;
     }
+
+    $this->update(['status' => 'cancelled']);
+
+    \App\Models\ActivityLog::create([
+        'user_id' => auth()->id(),
+        'action' => 'cancelled_booking',
+        'description' => "Đã hủy đặt chỗ #{$this->booking_code}",
+        'properties' => ['booking_id' => $this->id]
+    ]);
+
+    return true;
+}
 
     /**
      * Confirm the booking.

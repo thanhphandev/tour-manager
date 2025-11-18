@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreBookingRequest;
+use App\Models\ActivityLog;
 use App\Models\Booking;
 use App\Models\Tour;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Mail\BookingConfirmationMail;
 use App\Mail\BookingCancellationMail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class BookingController extends Controller
@@ -23,26 +26,21 @@ class BookingController extends Controller
                 ->with('error', 'Tour này hiện không khả dụng để đặt.');
         }
 
+        if (!$this->checkAvailability($tour, 1)) {
+            return redirect()->route('tours.show', $tour)
+                ->with('error', 'Tour này hiện đã hết chỗ.');
+        }
+
         return view('bookings.create', compact('tour'));
     }
 
     /**
      * Store a newly created booking.
      */
-    public function store(Request $request, Tour $tour)
+    public function store(StoreBookingRequest $request, Tour $tour)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'required|string|max:20',
-            'adults' => 'required|integer|min:1',
-            'children' => 'nullable|integer|min:0',
-            'infants' => 'nullable|integer|min:0',
-            'special_requests' => 'nullable|string|max:1000',
-        ]);
-
-        // Calculate total people
-        $totalPeople = ($validated['adults'] ?? 0) + ($validated['children'] ?? 0) + ($validated['infants'] ?? 0);
+        $validated = $request->validated();
+        $totalPeople = $request->totalPeople();
 
         if ($totalPeople < 1) {
             return back()->withErrors(['adults' => 'Phải có ít nhất 1 người đặt tour.']);
@@ -58,55 +56,55 @@ class BookingController extends Controller
         try {
             // Double-check available slots with lock to prevent race condition
             // Use FOR UPDATE lock to prevent concurrent bookings
-            $currentMaxPeople = DB::table('tours')
+            $tourLocked = DB::table('tours')
                 ->where('id', $tour->id)
                 ->lockForUpdate()
-                ->value('max_people');
+                ->first(['id', 'max_people', 'name', 'price_adult', 'price_child', 'price_infant']);
 
-            if ($currentMaxPeople !== null && $currentMaxPeople < $totalPeople) {
-                throw new \Exception('Tour không đủ chỗ trống.');
+            $bookedSlots = Booking::where('tour_id', $tour->id)
+                ->whereIn('status', ['pending', 'confirmed'])
+                ->sum('total_people');
+
+            $remainingSlots = $tourLocked->max_people - $bookedSlots;
+
+            if ($totalPeople > $remainingSlots) {
+                throw new \Exception("Tour không đủ chỗ trống. Chỉ còn {$remainingSlots} chỗ.");
             }
 
-            // Create booking
+            $totalAmount = $this->calculateTotalAmount($tour, $validated);
+
+
             $booking = Booking::create([
                 'user_id' => auth()->id(),
                 'tour_id' => $tour->id,
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'phone' => $validated['phone'],
-                'adults' => $validated['adults'] ?? 0,
+                'adults' => $validated['adults'],
                 'children' => $validated['children'] ?? 0,
                 'infants' => $validated['infants'] ?? 0,
                 'total_people' => $totalPeople,
                 'special_requests' => $validated['special_requests'] ?? null,
                 'status' => 'pending',
-                'total_amount' => $this->calculateTotalAmount($tour, $validated),
+                'total_amount' => $totalAmount,
             ]);
 
-            // Decrement max_people to reserve slots (prevent race condition)
-            if ($currentMaxPeople !== null) {
-                $tour->decrement('max_people', $totalPeople);
-            }
-
-            // Log activity
-            \App\Models\ActivityLog::create([
+            ActivityLog::create([
                 'user_id' => auth()->id(),
                 'action' => 'created_booking',
-                'description' => "Đã tạo đặt chỗ #{$booking->booking_code} cho tour {$tour->name}",
+                'description' => "Đã tạo đặt chỗ #{$booking->booking_code} cho tour {$tourLocked->name}",
                 'properties' => [
                     'booking_id' => $booking->id,
                     'tour_id' => $tour->id,
-                    'tour_name' => $tour->name,
-                    'total_amount' => $booking->total_amount,
-                    'reserved_slots' => $totalPeople,
+                    'amount' => $totalAmount,
+                    'slots' => $totalPeople,
                 ],
             ]);
-
+            
             DB::commit();
 
-            // Send confirmation email (optional)
             try {
-                Mail::to($booking->email)->send(new BookingConfirmationMail($booking));
+                Mail::to($booking->email)->queue(new BookingConfirmationMail($booking));
             } catch (\Exception $e) {
                 // Log error but don't fail the booking
                 \Log::error('Failed to send booking confirmation email: ' . $e->getMessage());
@@ -118,9 +116,13 @@ class BookingController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Booking creation failed: ' . $e->getMessage());
-            
-            return back()->with('error', 'Có lỗi xảy ra khi đặt tour. Vui lòng thử lại.');
+            Log::error('Booking failed: ' . $e->getMessage());
+
+            $message = $e->getMessage() === "Tour không đủ chỗ trống." 
+                ? $e->getMessage() 
+                : 'Có lỗi xảy ra khi xử lý. Vui lòng thử lại.';
+
+            return back()->withInput()->with('error', $message);
         }
     }
 
@@ -211,9 +213,11 @@ class BookingController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        // Check if booking can be cancelled
-        if (!$booking->canCancel()) {
-            return back()->with('error', 'Không thể hủy đặt chỗ này.');
+        $errorReason = $booking->getCancellationError();
+
+        if ($errorReason) {
+            // Trả về đúng lý do đó cho người dùng
+            return back()->with('error', $errorReason);
         }
 
         DB::beginTransaction();
@@ -225,7 +229,7 @@ class BookingController extends Controller
 
             // Send cancellation email
             try {
-                Mail::to($booking->email)->send(new BookingCancellationMail($booking));
+                Mail::to($booking->email)->queue(new BookingCancellationMail($booking));
             } catch (\Exception $e) {
                 \Log::error('Failed to send cancellation email: ' . $e->getMessage());
             }
@@ -239,6 +243,15 @@ class BookingController extends Controller
             
             return back()->with('error', 'Có lỗi xảy ra khi hủy đặt chỗ. Vui lòng thử lại.');
         }
+    }
+
+    private function checkAvailability(Tour $tour, int $requiredSlots): bool
+    {
+        $booked = Booking::where('tour_id', $tour->id)
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->sum('total_people');
+            
+        return ($tour->max_people - $booked) >= $requiredSlots;
     }
 
     /**
