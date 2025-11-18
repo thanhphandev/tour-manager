@@ -223,6 +223,9 @@ class PaymentController extends Controller
             ]);
 
             if (!$result['success']) {
+                // Mark payment as failed
+                $payment->markAsFailed('PayPal order creation failed: ' . $result['error']);
+                
                 DB::rollBack();
                 
                 Log::error('PayPal order creation failed', [
@@ -314,6 +317,9 @@ class PaymentController extends Controller
             $result = $paypalService->captureOrder($token);
 
             if (!$result['success']) {
+                // Mark payment as failed
+                $payment->markAsFailed('PayPal capture failed: ' . $result['error']);
+                
                 DB::rollBack();
                 
                 Log::error('PayPal capture failed', [
@@ -435,6 +441,11 @@ class PaymentController extends Controller
                 $payment = null;
                 if (isset($request->vnp_TxnRef)) {
                     $payment = Payment::where('payment_code', $request->vnp_TxnRef)->first();
+                }
+                
+                // Mark payment as failed
+                if ($payment) {
+                    $payment->markAsFailed('VNPay validation failed: ' . $result['message'] . ' (Code: ' . ($result['data']['response_code'] ?? 'N/A') . ')');
                 }
                 
                 if ($payment && $payment->booking) {
