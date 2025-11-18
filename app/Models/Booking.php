@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -141,8 +142,12 @@ class Booking extends Model
             return 'Đã quá thời hạn 24 giờ kể từ khi đặt, bạn không thể hủy miễn phí.';
         }
 
-        if ($this->tour->start_date && $this->tour->start_date->lte(now())) {
-            return 'Tour đã khởi hành hoặc đã kết thúc, không thể hủy.';
+        if ($this->tour->start_date) {
+            $startDate = Carbon::parse($this->tour->start_date);
+            
+            if ($startDate->lte(now())) {
+                return 'Tour đã khởi hành hoặc đã kết thúc, không thể hủy.';
+            }
         }
 
         if (!in_array($this->status, ['pending', 'confirmed'])) {

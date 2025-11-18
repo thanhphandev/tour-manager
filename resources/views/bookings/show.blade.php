@@ -159,59 +159,89 @@
             </div>
             @endif
 
-            <!-- Payment Information -->
-            @php
-                $successfulPayment = $booking->getSuccessfulPayment();
-                $latestPayment = $booking->getLatestPayment();
-                $displayPayment = $successfulPayment ?? $latestPayment;
-            @endphp
-            @if($displayPayment)
+            <!-- Payment History -->
+            @if($booking->payments->count() > 0)
             <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
                 <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
                     <svg class="w-6 h-6 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                     </svg>
-                    Thông tin thanh toán
+                    Lịch sử thanh toán
+                    <span class="ml-2 text-sm font-normal text-gray-500">({{ $booking->payments->count() }} lần)</span>
                 </h3>
-                <div class="grid md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-sm text-gray-600">Mã thanh toán</label>
-                        <p class="font-mono font-semibold text-gray-900">{{ $displayPayment->payment_code }}</p>
+                
+                <div class="space-y-4">
+                    @foreach($booking->payments as $payment)
+                    <div class="border border-gray-200 rounded-xl p-4 hover:border-indigo-300 transition-colors
+                        {{ $payment->status === 'success' ? 'bg-green-50' : '' }}
+                        {{ $payment->status === 'pending' ? 'bg-yellow-50' : '' }}
+                        {{ $payment->status === 'failed' ? 'bg-red-50' : '' }}
+                        {{ $payment->status === 'refunded' ? 'bg-purple-50' : '' }}">
+                        
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center gap-2">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
+                                    {{ $payment->status === 'success' ? 'bg-green-100 text-green-800' : '' }}
+                                    {{ $payment->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                    {{ $payment->status === 'failed' ? 'bg-red-100 text-red-800' : '' }}
+                                    {{ $payment->status === 'refunded' ? 'bg-purple-100 text-purple-800' : '' }}">
+                                    @if($payment->status === 'success')
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Thành công
+                                    @elseif($payment->status === 'pending')
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Đang xử lý
+                                    @elseif($payment->status === 'failed')
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Thất bại
+                                    @elseif($payment->status === 'refunded')
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Đã hoàn tiền
+                                    @endif
+                                </span>
+                                <span class="text-xs text-gray-500">{{ $payment->created_at->format('d/m/Y H:i') }}</span>
+                            </div>
+                            <span class="font-bold text-gray-900">{{ number_format($payment->amount) }} VNĐ</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                            <div>
+                                <span class="text-gray-600">Mã thanh toán:</span>
+                                <span class="font-mono font-semibold text-gray-900 ml-1">{{ $payment->payment_code }}</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-600">Phương thức:</span>
+                                <span class="font-semibold text-gray-900 ml-1 capitalize">{{ $payment->payment_method }}</span>
+                            </div>
+                            @if($payment->transaction_id)
+                            <div class="col-span-2">
+                                <span class="text-gray-600">Mã giao dịch:</span>
+                                <span class="font-mono font-semibold text-gray-900 ml-1">{{ $payment->transaction_id }}</span>
+                            </div>
+                            @endif
+                            @if($payment->paid_at)
+                            <div class="col-span-2">
+                                <span class="text-gray-600">Thanh toán lúc:</span>
+                                <span class="font-semibold text-gray-900 ml-1">{{ $payment->paid_at->format('d/m/Y H:i:s') }}</span>
+                            </div>
+                            @endif
+                            @if($payment->notes)
+                            <div class="col-span-2">
+                                <span class="text-gray-600">Ghi chú:</span>
+                                <span class="text-gray-900 ml-1">{{ $payment->notes }}</span>
+                            </div>
+                            @endif
+                        </div>
                     </div>
-                    <div>
-                        <label class="text-sm text-gray-600">Phương thức</label>
-                        <p class="font-semibold text-gray-900 capitalize">{{ $displayPayment->payment_method }}</p>
-                    </div>
-                    <div>
-                        <label class="text-sm text-gray-600">Trạng thái</label>
-                        <p class="font-semibold text-gray-900">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs
-                                {{ $displayPayment->status === 'success' ? 'bg-green-100 text-green-800' : '' }}
-                                {{ $displayPayment->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                {{ $displayPayment->status === 'failed' ? 'bg-red-100 text-red-800' : '' }}
-                                {{ $displayPayment->status === 'refunded' ? 'bg-purple-100 text-purple-800' : '' }}">
-                                {{ ucfirst($displayPayment->status) }}
-                            </span>
-                        </p>
-                    </div>
-                    @if($displayPayment->transaction_id)
-                    <div>
-                        <label class="text-sm text-gray-600">Mã giao dịch</label>
-                        <p class="font-mono font-semibold text-gray-900">{{ $displayPayment->transaction_id }}</p>
-                    </div>
-                    @endif
-                    @if($displayPayment->paid_at)
-                    <div>
-                        <label class="text-sm text-gray-600">Thời gian thanh toán</label>
-                        <p class="font-semibold text-gray-900">{{ $displayPayment->paid_at->format('d/m/Y H:i') }}</p>
-                    </div>
-                    @endif
-                    @if($displayPayment->notes)
-                    <div class="md:col-span-2">
-                        <label class="text-sm text-gray-600">Ghi chú</label>
-                        <p class="text-gray-900">{{ $displayPayment->notes }}</p>
-                    </div>
-                    @endif
+                    @endforeach
                 </div>
             </div>
             @endif

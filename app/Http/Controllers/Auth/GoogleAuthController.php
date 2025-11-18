@@ -45,7 +45,10 @@ class GoogleAuthController extends Controller
                 ->first();
 
             if ($user) {
-                // Cập nhật thông tin Google nếu user đã tồn tại
+                if (!$user->is_active) {
+                    return redirect()->route('login')
+                        ->withErrors(['email' => 'Tài khoản của bạn đã bị khóa.']);
+                }
                 $user->update([
                     'google_id' => $googleUser->id,
                     'avatar' => $googleUser->avatar,
