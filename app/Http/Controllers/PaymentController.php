@@ -325,12 +325,13 @@ class PaymentController extends Controller
                 Log::error('PayPal capture failed', [
                     'order_id' => $token,
                     'error' => $result['error'],
+                    'error_data' => $result['data'] ?? null,
                 ]);
 
-                return redirect()->route('payments.error', $booking)
+                return redirect()->route('payments.error', ['booking' => $booking->booking_code])
                     ->with([
-                        'errorMessage' => 'Thanh toán PayPal thất bại: ' . $result['error'],
-                        'errorCode' => 'PAYPAL_CAPTURE_FAILED',
+                        'errorMessage' => $result['error'],
+                        'errorCode' => $result['data']['error_code'] ?? 'PAYPAL_CAPTURE_FAILED',
                         'transactionId' => $token,
                         'paymentMethod' => 'PayPal',
                     ]);
@@ -363,13 +364,25 @@ class PaymentController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             
+            // Try to mark payment as failed if we have the token
+            if (isset($token)) {
+                $payment = Payment::whereJsonContains('transaction_data->paypal_order_id', $token)
+                    ->where('status', 'pending')
+                    ->first();
+                    
+                if ($payment) {
+                    $payment->markAsFailed('System error: ' . $e->getMessage());
+                }
+            }
+            
             Log::error('PayPal callback processing failed', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
+                'token' => $token ?? null,
             ]);
 
             return redirect()->route('bookings.history')
-                ->with('error', 'Có lỗi xảy ra khi xử lý thanh toán. Vui lòng liên hệ bộ phận hỗ trợ.');
+                ->with('error', $e->getMessage());
         }
     }
 
@@ -388,9 +401,15 @@ class PaymentController extends Controller
             ->first();
 
         if ($payment) {
+            // Load booking relationship
+            $payment->load('booking');
             $booking = $payment->booking;
             
-            return redirect()->route('payments.error', $booking)
+            // Mark payment as failed due to user cancellation
+            $payment->markAsFailed('Giao dịch không thành công do: Khách hàng hủy giao dịch');
+            
+            // Pass booking_code instead of booking object
+            return redirect()->route('payments.error', ['booking' => $booking->booking_code])
                 ->with([
                     'errorMessage' => 'Bạn đã hủy thanh toán PayPal.',
                     'errorCode' => 'USER_CANCELLED',
@@ -445,11 +464,11 @@ class PaymentController extends Controller
                 
                 // Mark payment as failed
                 if ($payment) {
-                    $payment->markAsFailed('VNPay validation failed: ' . $result['message'] . ' (Code: ' . ($result['data']['response_code'] ?? 'N/A') . ')');
+                    $payment->markAsFailed($result['message'] . ' (Code: ' . ($result['data']['response_code'] ?? 'N/A') . ')');
                 }
                 
                 if ($payment && $payment->booking) {
-                    return redirect()->route('payments.error', $payment->booking)
+                    return redirect()->route('payments.error', ['booking' => $payment->booking->booking_code])
                         ->with([
                             'errorMessage' => 'Thanh toán thất bại: ' . $result['message'],
                             'errorCode' => $result['data']['response_code'] ?? 'VNPAY_ERROR',
@@ -510,6 +529,18 @@ class PaymentController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+            
+            // Try to mark payment as failed if we have txn_ref
+            if (isset($request->vnp_TxnRef)) {
+                $payment = Payment::where('payment_code', $request->vnp_TxnRef)
+                    ->where('status', 'pending')
+                    ->first();
+                    
+                if ($payment) {
+                    $payment->markAsFailed('System error: ' . $e->getMessage());
+                }
+            }
+            
             Log::error('VNPay callback processing failed: ' . $e->getMessage());
 
             return redirect()->route('bookings.history')
