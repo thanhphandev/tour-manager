@@ -33,14 +33,26 @@
                 <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
                     <div class="flex-1">
                         <!-- Badges -->
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-full text-sm font-semibold border border-white/30">
-                                📍 {{ $tour->destination->name }}
-                            </span>
+                        <div class="flex items-center gap-3 mb-4 group">
+                            {{-- Badge Địa điểm --}}
+                            <div class="bg-white/20 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-sm font-semibold border border-white/30 flex items-center gap-1.5 shadow-sm transition-all duration-300 hover:bg-white/30">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-red-100 group-hover:text-red-300 group-hover:animate-bounce transition-colors">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                                </svg>
+                                
+                                <span>{{ $tour->destination->name }}</span>
+                            </div>
+
+                            {{-- Badge Nổi bật --}}
                             @if($tour->featured)
-                                <span class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold">
-                                    ⭐ Nổi Bật
-                                </span>
+                                <div class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1.5 rounded-full text-sm font-bold flex items-center gap-1.5 shadow-lg shadow-orange-500/30 ring-1 ring-white/20">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 animate-pulse text-yellow-100">
+                                        <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clip-rule="evenodd" />
+                                    </svg>
+
+                                    <span>Nổi Bật</span>
+                                </div>
                             @endif
                         </div>
 
@@ -489,9 +501,9 @@
                                                             @endfor
                                                         </div>
                                                         @if($review->is_verified)
-                                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
-                                                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                            <span class="inline-flex items-center text-blue-500">
+                                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                                                    <path fill-rule="evenodd" d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 01-7.877 3.08.75.75 0 00-.722.515A12.74 12.74 0 002.25 9.75c0 5.942 4.064 10.933 9.563 12.348a.749.749 0 00.374 0c5.499-1.415 9.563-6.406 9.563-12.348 0-1.39-.223-2.73-.635-3.985a.75.75 0 00-.722-.516l-.143.001c-2.996 0-5.717-1.17-7.734-3.08zm3.094 8.016a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd"/>
                                                                 </svg>
                                                                 Đã xác minh
                                                             </span>

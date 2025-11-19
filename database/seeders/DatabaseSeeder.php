@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'thanhphanvan@gmail.com',
             'password' => Hash::make('123'),
             'is_admin' => true,
+            'avatar' => 'https://api.dicebear.com/9.x/adventurer/svg?seed=PhanVanThanh',
         ]);
 
         $this->call([

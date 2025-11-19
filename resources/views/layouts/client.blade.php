@@ -66,9 +66,9 @@
                         <div class="relative">
                             <button @click="userMenuOpen = !userMenuOpen" 
                                     class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors">
-                                <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                                    {{ substr(auth()->user()->name, 0, 1) }}
-                                </div>
+                                <img src="{{ auth()->user()->avatar }}" 
+                                     alt="{{ auth()->user()->name }}"
+                                     class="w-8 h-8 rounded-full object-cover">
                                 <span class="text-sm font-medium text-gray-700">{{  auth()->user()->name }}</span>
                                 <svg class="w-4 h-4 text-gray-500 transition-transform" :class="{ 'rotate-180': userMenuOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -190,9 +190,9 @@
                     @endif
                     <div class="border-t border-gray-200 mt-3 pt-3">
                         <div class="flex items-center px-3 py-2 mb-2">
-                            <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm mr-3">
-                                {{ substr(auth()->user()->name, 0, 1) }}
-                            </div>
+                            <img src="{{ auth()->user()->avatar }}" 
+                                 alt="{{ auth()->user()->name }}"
+                                 class="w-8 h-8 rounded-full object-cover mr-3">
                             <div>
                                 <p class="text-sm font-medium text-gray-900">{{ auth()->user()->name }}</p>
                                 <p class="text-xs text-gray-500">{{ auth()->user()->email }}</p>

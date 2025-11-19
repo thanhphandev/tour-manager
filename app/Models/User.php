@@ -12,6 +12,17 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            if (empty($user->avatar)) {
+                $user->avatar = "https://api.dicebear.com/9.x/adventurer/svg?seed=" . urlencode($user->name ?? 'User');
+            }
+        });
+    }
+
     /**
      * The attributes that are mass assignable.
      *

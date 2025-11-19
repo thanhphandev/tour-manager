@@ -246,9 +246,9 @@
                                 <p class="text-sm font-medium text-gray-900">{{ auth()->user()->name }}</p>
                                 <p class="text-xs text-gray-500">Administrator</p>
                             </div>
-                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold">
-                                {{ substr(auth()->user()->name, 0, 1) }}
-                            </div>
+                            <img src="{{ auth()->user()->avatar }}" 
+                                 alt="{{ auth()->user()->name }}"
+                                 class="w-10 h-10 rounded-full object-cover">
                         </div>
 
                         <!-- Logout -->
