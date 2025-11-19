@@ -16,14 +16,18 @@ class BookingCancellationMail extends Mailable implements ShouldQueue
 
     public $booking;
     public $reason;
+    public $payment;
+    public $refundAmount;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(Booking $booking, ?string $reason = null)
+    public function __construct(Booking $booking, ?string $reason = null, $payment = null)
     {
         $this->booking = $booking->load('tour', 'user');
         $this->reason = $reason;
+        $this->payment = $payment;
+        $this->refundAmount = $payment ? $payment->amount : $booking->total_amount;
     }
 
     /**
@@ -48,6 +52,8 @@ class BookingCancellationMail extends Mailable implements ShouldQueue
                 'tour' => $this->booking->tour,
                 'user' => $this->booking->user,
                 'reason' => $this->reason,
+                'payment' => $this->payment,
+                'refundAmount' => $this->refundAmount,
             ],
         );
     }

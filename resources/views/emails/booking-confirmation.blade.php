@@ -8,7 +8,7 @@
 <p>Cảm ơn bạn đã đặt tour tại TravelGo! Chúng tôi rất vui được đồng hành cùng bạn trong chuyến du lịch sắp tới.</p>
 
 <div class="info-box">
-    <h3 style="margin-top: 0; color: #667eea;">📋 Thông Tin Đặt Tour</h3>
+    <h3 style="margin-top: 0; color: #667eea;">Thông Tin Đặt Tour</h3>
     
     <div class="info-row">
         <span class="info-label">Mã đặt chỗ:</span>
@@ -50,23 +50,17 @@
     <div class="info-row">
         <span class="info-label">Trạng thái:</span>
         <span class="info-value">
-            @if($booking->payment_status === 'paid')
-                <span class="badge success">✓ Đã thanh toán</span>
-            @else
-                <span class="badge warning">⏳ Chờ thanh toán</span>
-            @endif
+            <span class="badge warning">Chờ thanh toán</span>
         </span>
     </div>
 </div>
 
-@if($booking->payment_status !== 'paid')
 <div style="text-align: center;">
     <p><strong>Vui lòng hoàn tất thanh toán để xác nhận đặt chỗ của bạn.</strong></p>
     <a href="{{ route('payments.show', $booking) }}" class="button">
-        💳 Thanh Toán Ngay
+        Thanh Toán Ngay
     </a>
 </div>
-@endif
 
 <div class="info-box" style="background: #fff3cd; border-left-color: #ffc107;">
     <p style="margin: 0;"><strong>📌 Lưu ý quan trọng:</strong></p>

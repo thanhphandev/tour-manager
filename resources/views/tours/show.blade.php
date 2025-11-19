@@ -5,6 +5,10 @@
             <img src="{{ Storage::url($tour->primaryImage->image_path) }}" 
                  alt="{{ $tour->name }}"
                  class="w-full h-full object-cover">
+        @elseif($tour->thumbnail)
+            <img src="{{ Storage::url($tour->thumbnail) }}" 
+                 alt="{{ $tour->name }}"
+                 class="w-full h-full object-cover">
         @else
             <div class="w-full h-full bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500"></div>
         @endif

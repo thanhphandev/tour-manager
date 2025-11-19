@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\ActivityLog;
+use App\Mail\BookingCancellationMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class AdminPaymentController extends Controller
 {
@@ -76,6 +78,8 @@ class AdminPaymentController extends Controller
 
         DB::beginTransaction();
         try {
+            $booking = $payment->booking;
+            
             // Update payment status
             $payment->update([
                 'status' => 'refunded',
@@ -83,9 +87,22 @@ class AdminPaymentController extends Controller
             ]);
 
             // Update booking status to cancelled
-            $payment->booking->update([
+            $booking->update([
                 'status' => 'cancelled',
             ]);
+
+            // Restore tour slots
+            $tour = $booking->tour;
+            $restoredSlots = $booking->total_people;
+
+            // Send cancellation email to customer
+            try {
+                Mail::to($booking->email)
+                    ->send(new BookingCancellationMail($booking, $request->reason, $payment));
+            } catch (\Exception $mailException) {
+                \Log::error('Failed to send cancellation email: ' . $mailException->getMessage());
+                // Continue with refund process even if email fails
+            }
 
             // Log activity
             ActivityLog::create([
@@ -96,16 +113,18 @@ class AdminPaymentController extends Controller
                     'payment_id' => $payment->id,
                     'payment_code' => $payment->payment_code,
                     'booking_id' => $payment->booking_id,
-                    'booking_code' => $payment->booking->booking_code,
+                    'booking_code' => $booking->booking_code,
                     'amount' => $payment->amount,
                     'reason' => $request->reason,
-                    'restored_slots' => $payment->booking->total_people,
+                    'restored_slots' => $restoredSlots,
+                    'customer_email' => $booking->email,
+                    'tour_name' => $tour->name,
                 ],
             ]);
 
             DB::commit();
             return redirect()->route('admin.payments.show', $payment)
-                ->with('success', 'Đã hoàn tiền thành công.');
+                ->with('success', 'Đã hoàn tiền thành công và gửi thông báo đến khách hàng.');
                 
         } catch (\Exception $e) {
             DB::rollBack();

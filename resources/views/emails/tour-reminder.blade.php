@@ -3,7 +3,7 @@
 @section('content')
 <h2 style="color: #333; margin-top: 0;">🔔 Nhắc Nhở Tour Sắp Diễn Ra</h2>
 
-<p>Xin chào <strong>{{ $booking->full_name }}</strong>,</p>
+<p>Xin chào <strong>{{ $booking->name }}</strong>,</p>
 
 <p>Chuyến du lịch của bạn sắp bắt đầu! Đây là một số thông tin quan trọng bạn cần lưu ý.</p>
 
@@ -27,7 +27,7 @@
     
     <div class="info-row">
         <span class="info-label">Thời gian:</span>
-        <span class="info-value">{{ $booking->tour->duration }} ngày {{ $booking->tour->duration - 1 }} đêm</span>
+        <span class="info-value">{{ $booking->tour->duration_days }} ngày {{ $booking->tour->duration_nights }} đêm</span>
     </div>
     
     <div class="info-row">

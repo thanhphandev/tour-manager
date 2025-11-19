@@ -1,14 +1,14 @@
 @extends('emails.layout')
 
 @section('content')
-<h2 style="color: #dc3545; margin-top: 0;">❌ Thông Báo Hủy Đặt Tour</h2>
+<h2 style="color: #dc3545; margin-top: 0;">Thông Báo Hủy Đặt Tour</h2>
 
-<p>Xin chào <strong>{{ $booking->full_name }}</strong>,</p>
+<p>Xin chào <strong>{{ $booking->name }}</strong>,</p>
 
 <p>Đơn đặt tour của bạn đã được hủy thành công.</p>
 
 <div class="info-box" style="background: #f8d7da; border-left-color: #dc3545;">
-    <h3 style="margin-top: 0; color: #dc3545;">📋 Thông Tin Đặt Tour Đã Hủy</h3>
+    <h3 style="margin-top: 0; color: #dc3545;">Thông Tin Đặt Tour Đã Hủy</h3>
     
     <div class="info-row">
         <span class="info-label">Mã đặt chỗ:</span>
@@ -39,11 +39,11 @@
     @endif
 </div>
 
-@if($booking->payment_status === 'paid')
+@if($payment && $payment->status === 'refunded')
 <div class="info-box" style="background: #d1ecf1; border-left-color: #17a2b8;">
-    <p style="margin: 0;"><strong>💰 Hoàn Tiền</strong></p>
+    <p style="margin: 0;"><strong>Hoàn Tiền</strong></p>
     <p style="margin: 10px 0 0 0;">
-        Số tiền <strong>{{ number_format($booking->total_amount) }} đ</strong> sẽ được hoàn lại vào tài khoản của bạn trong vòng 7-10 ngày làm việc.
+        Số tiền <strong>{{ number_format($refundAmount) }} đ</strong> sẽ được hoàn lại vào tài khoản của bạn trong vòng 7-10 ngày làm việc.
     </p>
 </div>
 @endif

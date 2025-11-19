@@ -3,7 +3,7 @@
 @section('content')
 <h2 style="color: #333; margin-top: 0;">✅ Xác Nhận Thanh Toán Thành Công</h2>
 
-<p>Xin chào <strong>{{ $payment->booking->full_name }}</strong>,</p>
+<p>Xin chào <strong>{{ $payment->booking->name }}</strong>,</p>
 
 <p>Thanh toán của bạn đã được xử lý thành công! Tour của bạn đã được xác nhận.</p>
 
@@ -16,7 +16,7 @@
     </div>
     
     <div class="info-row">
-        <span class="info-label">Mã giao dịch:</span>
+        <span class="info-label">Mã tham chiếu:</span>
         <span class="info-value">{{ $payment->transaction_id ?? 'N/A' }}</span>
     </div>
     

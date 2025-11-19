@@ -3,7 +3,7 @@
 @section('content')
 <h2 style="color: #333; margin-top: 0;">⭐ Chia Sẻ Trải Nghiệm Của Bạn</h2>
 
-<p>Xin chào <strong>{{ $booking->full_name }}</strong>,</p>
+<p>Xin chào <strong>{{ $booking->full }}</strong>,</p>
 
 <p>Cảm ơn bạn đã lựa chọn TravelGo cho chuyến du lịch của mình! Chúng tôi hy vọng bạn đã có những trải nghiệm tuyệt vời.</p>
 
