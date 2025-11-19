@@ -29,14 +29,16 @@ class AdminDashboardController extends Controller
             ->whereMonth('created_at', now()->month)
             ->count();
         
-        // Revenue Statistics
-        $totalRevenue = Booking::where('status', 'confirmed')->sum('total_amount');
-        $revenueThisMonth = Booking::where('status', 'confirmed')
-            ->whereMonth('created_at', now()->month)
-            ->sum('total_amount');
-        $revenueLastMonth = Booking::where('status', 'confirmed')
-            ->whereMonth('created_at', now()->subMonth()->month)
-            ->sum('total_amount');
+        // Revenue Statistics (using Payment model for accuracy)
+        $totalRevenue = \App\Models\Payment::where('status', 'success')->sum('amount');
+        $revenueThisMonth = \App\Models\Payment::where('status', 'success')
+            ->whereMonth('paid_at', now()->month)
+            ->whereYear('paid_at', now()->year)
+            ->sum('amount');
+        $revenueLastMonth = \App\Models\Payment::where('status', 'success')
+            ->whereMonth('paid_at', now()->subMonth()->month)
+            ->whereYear('paid_at', now()->subMonth()->year)
+            ->sum('amount');
         
         // Calculate revenue growth
         $revenueGrowth = 0;

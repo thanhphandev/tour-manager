@@ -36,7 +36,7 @@ class AdminDestinationController extends Controller
             $destination->update(['image' => $path]);
         }
 
-        return redirect()->route('admin.destinations.index')->with('success', 'Destination created successfully.');
+        return redirect()->route('admin.destinations.index')->with('success', 'Đã tạo điểm đến mới thành công.');
     }
 
     public function edit(Destination $destination)
@@ -63,7 +63,7 @@ class AdminDestinationController extends Controller
             $destination->update(['image' => $path]);
         }
 
-        return redirect()->route('admin.destinations.index')->with('success', 'Destination updated successfully.');
+        return redirect()->route('admin.destinations.index')->with('success', 'Đã cập nhật điểm đến thành công.');
     }
 
     public function destroy(Destination $destination)
@@ -73,6 +73,6 @@ class AdminDestinationController extends Controller
         }
 
         $destination->delete();
-        return redirect()->route('admin.destinations.index')->with('success', 'Destination deleted successfully.');
+        return redirect()->route('admin.destinations.index')->with('success', 'Đã xóa điểm đến thành công.');
     }
 }

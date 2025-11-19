@@ -137,10 +137,6 @@ Route::prefix('admin')
         Route::post('/settings', [AdminSettingController::class, 'store'])->name('settings.store');
         Route::delete('/settings/{setting}', [AdminSettingController::class, 'destroy'])->name('settings.destroy');
 
-        // ----- Email Templates -----
-        Route::resource('email-templates', AdminEmailTemplateController::class);
-        Route::put('/email-templates/{emailTemplate}/toggle', [AdminEmailTemplateController::class, 'toggle'])->name('email-templates.toggle');
-
     // ----- Reports -----
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/', [AdminReportController::class, 'index'])->name('index');
@@ -156,13 +152,7 @@ Route::prefix('admin')
         Route::get('/customers/pdf', [AdminReportController::class, 'exportCustomersPdf'])->name('customers.pdf');
     });
 
-    // ----- Emails -----
-    Route::prefix('emails')->name('emails.')->group(function () {
-        Route::get('/', [AdminEmailController::class, 'index'])->name('index');
-        Route::get('/compose', [AdminEmailController::class, 'compose'])->name('compose');
-        Route::post('/send', [AdminEmailController::class, 'send'])->name('send');
-        Route::get('/preview', [AdminEmailController::class, 'preview'])->name('preview');
-    });    });
+});
 
 
 Route::middleware('auth')->group(function () {

@@ -119,6 +119,7 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mã GD</th>
+                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mã Tham chiếu</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Booking</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khách Hàng</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số Tiền</th>
@@ -131,6 +132,9 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($payments as $payment)
                         <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">
+                                <div class="text-sm font-medium text-gray-900">{{ $payment->payment_code }}</div>
+                            </td>
                             <td class="px-6 py-4">
                                 <div class="text-sm font-medium text-gray-900">{{ $payment->transaction_id }}</div>
                             </td>

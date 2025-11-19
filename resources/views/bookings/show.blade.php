@@ -31,19 +31,7 @@
                                 {{ $booking->status === 'pending' ? 'Chờ xác nhận' : '' }}
                                 {{ $booking->status === 'cancelled' ? 'Đã hủy' : '' }}
                             </span>
-                            
-                            <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold
-                                {{ $booking->payment_status === 'paid' ? 'bg-green-100 text-green-800' : '' }}
-                                {{ $booking->payment_status === 'awaiting_payment' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                {{ $booking->payment_status === 'processing' ? 'bg-blue-100 text-blue-800' : '' }}
-                                {{ $booking->payment_status === 'payment_failed' ? 'bg-red-100 text-red-800' : '' }}
-                                {{ $booking->payment_status === 'refunded' ? 'bg-purple-100 text-purple-800' : '' }}
-                                {{ $booking->payment_status === 'cancelled' ? 'bg-gray-100 text-gray-800' : '' }}">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                                </svg>
-                                {{ $booking->status_label }}
-                            </span>
+                           
                         </div>
                     </div>
                     
@@ -61,11 +49,11 @@
                 <div class="md:flex">
                     <div class="md:w-1/3">
                         <img src="{{ $booking->tour->thumbnail ? asset('storage/' . $booking->tour->thumbnail) : 'https://via.placeholder.com/400x300' }}" 
-                             alt="{{ $booking->tour->title }}" 
+                             alt="{{ $booking->tour->name }}" 
                              class="w-full h-64 object-cover">
                     </div>
                     <div class="md:w-2/3 p-6">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ $booking->tour->title }}</h3>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ $booking->tour->name }}</h3>
                         <div class="space-y-2 text-gray-600">
                             <div class="flex items-center">
                                 <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -86,6 +74,22 @@
                                 </svg>
                                 <span>{{ \Carbon\Carbon::parse($booking->tour->start_date)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($booking->tour->end_date)->format('d/m/Y') }}</span>
                             </div>
+                            <div class="flex items-center">
+                                <svg fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                    class="w-5 h-5 mr-2 text-indigo-600">
+                                    <path stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+                                </svg>
+
+                                <a href="{{ route('tours.show', $booking->tour) }}" class="underline">
+                                    Thông tin tour
+                                </a>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -290,15 +294,6 @@
                     </svg>
                     Xem tour
                 </a>
-                @endif
-                
-                @if($booking->canCancel())
-                <form action="{{ route('bookings.cancel', $booking) }}" method="POST" class="flex-1 min-w-[200px]" onsubmit="return confirm('Bạn có chắc muốn hủy đặt tour này?')">
-                    @csrf
-                    <button type="submit" class="w-full bg-red-600 text-white px-6 py-4 rounded-xl font-semibold hover:bg-red-700 transition-all duration-300">
-                        Hủy đặt tour
-                    </button>
-                </form>
                 @endif
             </div>
         </div>

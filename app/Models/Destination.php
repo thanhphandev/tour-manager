@@ -51,6 +51,12 @@ class Destination extends Model
         static::creating(function($destination){
             $destination->slug = Str::slug($destination->name);
         });
+
+        static::updating(function($destination){
+            if ($destination->isDirty('name')) {
+                $destination->slug = Str::slug($destination->name);
+            }
+        });
     }
 
 }

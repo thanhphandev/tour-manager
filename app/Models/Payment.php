@@ -82,4 +82,56 @@ class Payment extends Model
             'notes' => $notes,
         ]);
     }
+    
+    /**
+     * Scope to get only successful payments
+     */
+    public function scopeSuccessful($query)
+    {
+        return $query->where('status', 'success')->whereNotNull('paid_at');
+    }
+    
+    /**
+     * Scope to get payments within date range (using paid_at)
+     */
+    public function scopePaidBetween($query, $startDate, $endDate)
+    {
+        return $query->whereBetween('paid_at', [$startDate, $endDate]);
+    }
+    
+    /**
+     * Scope to get payments by method
+     */
+    public function scopeByMethod($query, $method)
+    {
+        return $query->where('payment_method', $method);
+    }
+    
+    /**
+     * Get total revenue for successful payments
+     */
+    public static function getTotalRevenue($startDate = null, $endDate = null)
+    {
+        $query = self::successful();
+        
+        if ($startDate && $endDate) {
+            $query->paidBetween($startDate, $endDate);
+        }
+        
+        return $query->sum('amount');
+    }
+    
+    /**
+     * Get average payment amount
+     */
+    public static function getAverageAmount($startDate = null, $endDate = null)
+    {
+        $query = self::successful();
+        
+        if ($startDate && $endDate) {
+            $query->paidBetween($startDate, $endDate);
+        }
+        
+        return $query->avg('amount');
+    }
 }

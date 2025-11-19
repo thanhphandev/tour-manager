@@ -24,33 +24,34 @@ class AdminReportController extends Controller
         $startDate = $request->get('start_date') ? \Carbon\Carbon::parse($request->get('start_date')) : now()->startOfMonth();
         $endDate = $request->get('end_date') ? \Carbon\Carbon::parse($request->get('end_date')) : now()->endOfMonth();
 
-        // Revenue by date
+        // Revenue by date (using paid_at for accurate revenue reporting)
         $revenueData = Payment::where('payments.status', 'success')
-            ->whereBetween('payments.created_at', [$startDate, $endDate])
+            ->whereBetween('payments.paid_at', [$startDate, $endDate])
             ->select(
-                DB::raw('DATE(payments.created_at) as date'),
+                DB::raw('DATE(payments.paid_at) as date'),
                 DB::raw('SUM(amount) as total')
             )
             ->groupBy('date')
             ->orderBy('date')
             ->get();
 
-        // Revenue by tour
+        // Revenue by tour (using paid_at for accurate revenue reporting)
         $revenueByTour = Payment::where('payments.status', 'success')
-            ->whereBetween('payments.created_at', [$startDate, $endDate])
+            ->whereBetween('payments.paid_at', [$startDate, $endDate])
             ->join('bookings', 'payments.booking_id', '=', 'bookings.id')
             ->join('tours', 'bookings.tour_id', '=', 'tours.id')
-            ->select('tours.name', DB::raw('SUM(payments.amount) as total'))
+            ->select('tours.name', 'tours.id', DB::raw('SUM(payments.amount) as total'))
             ->groupBy('tours.id', 'tours.name')
             ->orderByDesc('total')
             ->limit(10)
             ->get();
 
-        // Revenue by payment provider
+        // Revenue by payment provider (using paid_at for accurate revenue reporting)
         $revenueByProvider = Payment::where('payments.status', 'success')
-            ->whereBetween('payments.created_at', [$startDate, $endDate])
-            ->select('payment_method', DB::raw('SUM(amount) as total'))
+            ->whereBetween('payments.paid_at', [$startDate, $endDate])
+            ->select('payment_method', DB::raw('SUM(amount) as total'), DB::raw('COUNT(*) as count'))
             ->groupBy('payment_method')
+            ->orderByDesc('total')
             ->get();
 
         $stats = [
@@ -134,11 +135,12 @@ class AdminReportController extends Controller
             ->limit(10)
             ->get();
 
-        // Tours by revenue
-        $toursByRevenue = Tour::leftJoin('bookings', 'tours.id', '=', 'bookings.tour_id')
-            ->leftJoin('payments', 'bookings.id', '=', 'payments.booking_id')
+        // Tours by revenue (only successful payments)
+        $toursByRevenue = Tour::join('bookings', 'tours.id', '=', 'bookings.tour_id')
+            ->join('payments', 'bookings.id', '=', 'payments.booking_id')
             ->where('payments.status', 'success')
-            ->select('tours.name', DB::raw('SUM(payments.amount) as revenue'))
+            ->whereNotNull('payments.paid_at')
+            ->select('tours.name', 'tours.id', DB::raw('SUM(payments.amount) as revenue'), DB::raw('COUNT(DISTINCT payments.id) as payment_count'))
             ->groupBy('tours.id', 'tours.name')
             ->orderByDesc('revenue')
             ->limit(10)
@@ -179,12 +181,13 @@ class AdminReportController extends Controller
             ->limit(10)
             ->get();
 
-        // Top customers by spending
-        $topSpenders = User::leftJoin('bookings', 'users.id', '=', 'bookings.user_id')
-            ->leftJoin('payments', 'bookings.id', '=', 'payments.booking_id')
+        // Top customers by spending (only successful payments)
+        $topSpenders = User::join('bookings', 'users.id', '=', 'bookings.user_id')
+            ->join('payments', 'bookings.id', '=', 'payments.booking_id')
             ->where('payments.status', 'success')
+            ->whereNotNull('payments.paid_at')
             ->where('users.is_admin', false)
-            ->select('users.name', 'users.email', DB::raw('SUM(payments.amount) as total_spent'))
+            ->select('users.id', 'users.name', 'users.email', DB::raw('SUM(payments.amount) as total_spent'), DB::raw('COUNT(DISTINCT payments.id) as payment_count'))
             ->groupBy('users.id', 'users.name', 'users.email')
             ->orderByDesc('total_spent')
             ->limit(10)
@@ -219,11 +222,11 @@ class AdminReportController extends Controller
         $startDate = $request->get('start_date') ? \Carbon\Carbon::parse($request->get('start_date')) : now()->startOfMonth();
         $endDate = $request->get('end_date') ? \Carbon\Carbon::parse($request->get('end_date')) : now()->endOfMonth();
 
-        // Get the same data as revenue report
+        // Get the same data as revenue report (using paid_at)
         $revenueData = Payment::where('payments.status', 'success')
-            ->whereBetween('payments.created_at', [$startDate, $endDate])
+            ->whereBetween('payments.paid_at', [$startDate, $endDate])
             ->select(
-                DB::raw('DATE(payments.created_at) as date'),
+                DB::raw('DATE(payments.paid_at) as date'),
                 DB::raw('SUM(amount) as total')
             )
             ->groupBy('date')
@@ -231,10 +234,10 @@ class AdminReportController extends Controller
             ->get();
 
         $revenueByTour = Payment::where('payments.status', 'success')
-            ->whereBetween('payments.created_at', [$startDate, $endDate])
+            ->whereBetween('payments.paid_at', [$startDate, $endDate])
             ->join('bookings', 'payments.booking_id', '=', 'bookings.id')
             ->join('tours', 'bookings.tour_id', '=', 'tours.id')
-            ->select('tours.name', DB::raw('SUM(payments.amount) as total'))
+            ->select('tours.name', 'tours.id', DB::raw('SUM(payments.amount) as total'))
             ->groupBy('tours.id', 'tours.name')
             ->orderByDesc('total')
             ->limit(10)
@@ -242,11 +245,14 @@ class AdminReportController extends Controller
 
         $stats = [
             'total_revenue' => Payment::where('status', 'success')
-                ->whereBetween('created_at', [$startDate, $endDate])
+                ->whereBetween('paid_at', [$startDate, $endDate])
                 ->sum('amount'),
+            'total_payments' => Payment::where('status', 'success')
+                ->whereBetween('paid_at', [$startDate, $endDate])
+                ->count(),
             'total_bookings' => Booking::whereBetween('created_at', [$startDate, $endDate])->count(),
             'average_booking_value' => Payment::where('status', 'success')
-                ->whereBetween('created_at', [$startDate, $endDate])
+                ->whereBetween('paid_at', [$startDate, $endDate])
                 ->avg('amount'),
         ];
 
@@ -307,10 +313,11 @@ class AdminReportController extends Controller
             ->limit(10)
             ->get();
 
-        $toursByRevenue = Tour::leftJoin('bookings', 'tours.id', '=', 'bookings.tour_id')
-            ->leftJoin('payments', 'bookings.id', '=', 'payments.booking_id')
+        $toursByRevenue = Tour::join('bookings', 'tours.id', '=', 'bookings.tour_id')
+            ->join('payments', 'bookings.id', '=', 'payments.booking_id')
             ->where('payments.status', 'success')
-            ->select('tours.name', DB::raw('SUM(payments.amount) as revenue'))
+            ->whereNotNull('payments.paid_at')
+            ->select('tours.name', 'tours.id', DB::raw('SUM(payments.amount) as revenue'), DB::raw('COUNT(DISTINCT payments.id) as payment_count'))
             ->groupBy('tours.id', 'tours.name')
             ->orderByDesc('revenue')
             ->limit(10)
@@ -350,11 +357,12 @@ class AdminReportController extends Controller
             ->limit(10)
             ->get();
 
-        $topSpenders = User::leftJoin('bookings', 'users.id', '=', 'bookings.user_id')
-            ->leftJoin('payments', 'bookings.id', '=', 'payments.booking_id')
+        $topSpenders = User::join('bookings', 'users.id', '=', 'bookings.user_id')
+            ->join('payments', 'bookings.id', '=', 'payments.booking_id')
             ->where('payments.status', 'success')
+            ->whereNotNull('payments.paid_at')
             ->where('users.is_admin', false)
-            ->select('users.name', 'users.email', DB::raw('SUM(payments.amount) as total_spent'))
+            ->select('users.id', 'users.name', 'users.email', DB::raw('SUM(payments.amount) as total_spent'), DB::raw('COUNT(DISTINCT payments.id) as payment_count'))
             ->groupBy('users.id', 'users.name', 'users.email')
             ->orderByDesc('total_spent')
             ->limit(10)

@@ -42,7 +42,6 @@ Hệ thống quản lý tour du lịch toàn diện với các tính năng đặ
 - ⭐ Kiểm duyệt reviews
 - 📈 Báo cáo chi tiết (doanh thu, bookings, tours, customers)
 - 📄 Xuất PDF reports
-- 📧 Email templates và bulk email
 - 🔔 Activity logs đầy đủ
 - ⚙️ Settings quản lý cấu hình
 

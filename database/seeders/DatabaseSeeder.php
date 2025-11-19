@@ -30,7 +30,6 @@ class DatabaseSeeder extends Seeder
             TourSeeder::class,
             TourImageSeeder::class,
             SettingSeeder::class,
-            EmailTemplateSeeder::class,
             AdminUserSeeder::class,
         ]);
     }

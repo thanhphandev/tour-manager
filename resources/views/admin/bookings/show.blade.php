@@ -43,7 +43,7 @@
                     <dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="bg-gray-50 rounded-lg p-4">
                             <dt class="text-xs font-medium text-gray-500 uppercase mb-1">Mã Đặt Chỗ</dt>
-                            <dd class="text-lg font-bold text-gray-900">#{{ $booking->id }}</dd>
+                            <dd class="text-lg font-bold text-gray-900">#{{ $booking->booking_code }}</dd>
                         </div>
                         <div class="bg-gray-50 rounded-lg p-4">
                             <dt class="text-xs font-medium text-gray-500 uppercase mb-1">Trạng Thái</dt>
@@ -358,7 +358,7 @@
                     @foreach($booking->payments as $payment)
                     <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-medium text-gray-500">Mã GD: #{{ $payment->id }}</span>
+                            <span class="text-xs font-medium text-gray-500">Mã GD: #{{ $payment->payment_code }}</span>
                             <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold 
                                 {{ $payment->status === 'success' ? 'bg-green-100 text-green-800' : 
                                    ($payment->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
