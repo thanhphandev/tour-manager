@@ -13,12 +13,12 @@ class Authenticate extends Middleware
     protected function redirectTo(Request $request): ?string
     {
         if (!$request->expectsJson()) {
-            // Lưu URL hiện tại vào session để redirect sau khi đăng nhập
+            // Lưu URL hiện tại vào query parameter
             $intendedUrl = $request->fullUrl();
             
-            // Kiểm tra URL có hợp lệ không (không phải các route auth)
-            if ($this->shouldSaveIntendedUrl($intendedUrl)) {
-                session(['url.intended' => $intendedUrl]);
+            // Chỉ lưu URL nội bộ, không phải route auth
+            if ($this->shouldRedirectBack($intendedUrl)) {
+                return route('login', ['redirect' => $intendedUrl]);
             }
             
             return route('login');
@@ -28,17 +28,17 @@ class Authenticate extends Middleware
     }
 
     /**
-     * Kiểm tra xem có nên lưu intended URL không
+     * Kiểm tra có nên redirect về URL này sau khi login không
      */
-    private function shouldSaveIntendedUrl(string $url): bool
+    private function shouldRedirectBack(string $url): bool
     {
-        // Không lưu các URL liên quan đến auth
+        // Không redirect về các trang auth
         $excludedPaths = [
             '/login',
             '/register',
             '/forgot-password',
             '/reset-password',
-            '/auth/google',
+            '/verify-email',
             '/logout',
         ];
 

@@ -16,9 +16,12 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(Request $request): View
     {
-        // Lưu callback URL nếu có trong query string
-        if ($request->has('callback')) {
-            session(['url.intended' => $request->query('callback')]);
+        // Lưu URL redirect từ middleware vào session
+        if ($request->has('redirect')) {
+            $redirectUrl = $request->query('redirect');
+            if ($this->isValidRedirectUrl($redirectUrl)) {
+                session(['url.intended' => $redirectUrl]);
+            }
         }
         
         return view('auth.login');
@@ -33,10 +36,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // Lấy intended URL an toàn từ session
+        // Lấy intended URL từ session (đã được lưu từ query parameter 'redirect')
         $intendedUrl = session()->pull('url.intended');
         
-        if ($intendedUrl && $this->isValidCallbackUrl($intendedUrl)) {
+        if ($intendedUrl && $this->isValidRedirectUrl($intendedUrl)) {
             return redirect($intendedUrl);
         }
 
@@ -46,9 +49,9 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Kiểm tra URL callback có hợp lệ và an toàn không
+     * Kiểm tra URL redirect có hợp lệ và an toàn không
      */
-    private function isValidCallbackUrl(string $url): bool
+    private function isValidRedirectUrl(string $url): bool
     {
         // Chỉ chấp nhận URL nội bộ
         if (filter_var($url, FILTER_VALIDATE_URL)) {
@@ -60,6 +63,14 @@ class AuthenticatedSessionController extends Controller
             }
             
             if (isset($urlParts['scheme']) && !in_array($urlParts['scheme'], ['http', 'https'])) {
+                return false;
+            }
+        }
+        
+        // Không chấp nhận redirect về trang auth (tránh loop)
+        $excludedPaths = ['/login', '/register', '/logout'];
+        foreach ($excludedPaths as $path) {
+            if (str_contains($url, $path)) {
                 return false;
             }
         }

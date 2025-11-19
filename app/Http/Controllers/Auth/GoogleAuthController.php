@@ -17,10 +17,10 @@ class GoogleAuthController extends Controller
      */
     public function redirect(Request $request)
     {
-        // Validate và lưu callback URL an toàn
-        $intendedUrl = $request->query('callback');
+        // Validate và lưu redirect URL an toàn
+        $intendedUrl = $request->query('redirect');
         
-        if ($intendedUrl && $this->isValidCallbackUrl($intendedUrl)) {
+        if ($intendedUrl && $this->isValidRedirectUrl($intendedUrl)) {
             session(['url.intended' => $intendedUrl]);
         }
         
@@ -73,12 +73,12 @@ class GoogleAuthController extends Controller
             // Lấy intended URL an toàn từ session
             $intendedUrl = session()->pull('url.intended');
             
-            if ($intendedUrl && $this->isValidCallbackUrl($intendedUrl)) {
-                return redirect($intendedUrl);
+            if ($intendedUrl && $this->isValidRedirectUrl($intendedUrl)) {
+                return redirect($intendedUrl)->with('success', 'Đăng nhập thành công!');
             }
 
             // Redirect mặc định dựa vào role
-            return redirect()->intended($user->is_admin ? '/admin/dashboard' : '/');
+            return redirect()->intended($user->is_admin ? '/admin/dashboard' : '/')->with('success', 'Đăng nhập thành công!');
 
         } catch (\Exception $e) {
             \Log::error('Google OAuth Error: ' . $e->getMessage());
@@ -89,12 +89,12 @@ class GoogleAuthController extends Controller
     }
 
     /**
-     * Kiểm tra URL callback có hợp lệ và an toàn không
+     * Kiểm tra URL redirect có hợp lệ và an toàn không
      * 
      * @param string $url
      * @return bool
      */
-    private function isValidCallbackUrl(string $url): bool
+    private function isValidRedirectUrl(string $url): bool
     {
         // Chỉ chấp nhận URL nội bộ (không có domain hoặc cùng domain)
         if (filter_var($url, FILTER_VALIDATE_URL)) {

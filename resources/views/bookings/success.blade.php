@@ -133,7 +133,7 @@
                         <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                         </svg>
-                        Nhân viên sẽ liên hệ với bạn qua số <strong>{{ $booking->phone }}</strong> trong 24h
+                        Nhân viên sẽ liên hệ với bạn qua số <span class="font-semibold space-x-2">{{ $booking->phone }}</span> trong 24h
                     </li>
                     <li class="flex items-start">
                         <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -159,6 +159,11 @@
                 <a href="{{ route('tours.index') }}" 
                    class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold text-center shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
                     Xem Thêm Tours
+                </a>
+                <a href="{{ route('bookings.show', $booking) }}"
+                    class="flex-1 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white px-8 py-4 rounded-xl font-bold text-center shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                    >
+                    Xem chi tiết đặt tour
                 </a>
             </div>
 

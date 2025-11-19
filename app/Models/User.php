@@ -23,7 +23,6 @@ class User extends Authenticatable
         'password',
         'google_id',
         'avatar',
-        'is_admin',
         'is_active',
     ];
 
@@ -35,6 +34,11 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+    ];
+
+    protected $guarded = [
+        'is_admin',
+        'is_active',
     ];
 
     /**

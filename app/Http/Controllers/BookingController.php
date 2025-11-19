@@ -211,53 +211,36 @@ class BookingController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        // Load tour để tính toán policy
+        // Load tour
         $booking->load('tour');
         
-        // Lấy cancellation policy
-        $policy = $booking->getCancellationPolicy();
-        
-        if (!$policy['can_cancel']) {
-            return back()->with('error', $policy['reason']);
+        // Check if can cancel
+        $error = $booking->getCancellationError();
+        if ($error) {
+            return back()->with('error', $error);
         }
 
         DB::beginTransaction();
 
         try {
+            // Cancel booking
             $result = $booking->cancel();
             
-            if (!$result['success']) {
-                return back()->with('error', $result['message']);
+            if (!$result) {
+                return back()->with('error', 'Không thể hủy đặt chỗ này.');
             }
 
             DB::commit();
 
-            // Send email thông báo
+            // Send email notification
             try {
-                if ($result['refund_percent'] > 0) {
-                    // Send email có thông tin refund
-                    Mail::to($booking->email)->queue(
-                        new BookingCancellationMail($booking, $result)
-                    );
-                } else {
-                    // Send email thông thường
-                    Mail::to($booking->email)->queue(
-                        new BookingCancellationMail($booking)
-                    );
-                }
+                Mail::to($booking->email)->queue(new BookingCancellationMail($booking));
             } catch (\Exception $e) {
                 Log::error('Failed to send cancellation email: ' . $e->getMessage());
             }
 
-            // Tạo success message
-            $message = 'Đã hủy đặt chỗ thành công.';
-            if ($result['refund_percent'] > 0) {
-                $message .= " Bạn sẽ được hoàn {$result['refund_percent']}% (" . 
-                    number_format($result['refund_amount']) . " VNĐ) số tiền đã thanh toán.";
-            }
-
             return redirect()->route('bookings.show', $booking)
-                ->with('success', $message);
+                ->with('success', 'Đã hủy đặt chỗ thành công.');
 
         } catch (\Exception $e) {
             DB::rollBack();
