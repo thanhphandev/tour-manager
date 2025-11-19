@@ -3,7 +3,7 @@
 @section('content')
 <h2 style="color: #333; margin-top: 0;">Xác Nhận Đặt Tour</h2>
 
-<p>Xin chào <strong>{{ $booking->full_name }}</strong>,</p>
+<p>Xin chào <strong>{{ $booking->name }}</strong>,</p>
 
 <p>Cảm ơn bạn đã đặt tour tại TravelGo! Chúng tôi rất vui được đồng hành cùng bạn trong chuyến du lịch sắp tới.</p>
 

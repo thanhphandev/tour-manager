@@ -295,6 +295,15 @@
                     Xem tour
                 </a>
                 @endif
+                
+                @if($booking->canCancel())
+                <form action="{{ route('bookings.cancel', $booking) }}" method="POST" class="flex-1 min-w-[200px]" onsubmit="return confirm('Bạn có chắc muốn hủy đặt tour này?')">
+                    @csrf
+                    <button type="submit" class="w-full bg-red-600 text-white px-6 py-4 rounded-xl font-semibold hover:bg-red-700 transition-all duration-300">
+                        Hủy đặt tour
+                    </button>
+                </form>
+                @endif
             </div>
         </div>
     </div>

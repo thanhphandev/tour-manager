@@ -213,6 +213,21 @@
                                         </a>
                                         @endif
 
+                                        @if($booking->canCancel())
+                                        <form action="{{ route('bookings.cancel', $booking) }}" 
+                                              method="POST" 
+                                              onsubmit="return confirm('Bạn có chắc muốn hủy booking này?')"
+                                              class="flex-1">
+                                            @csrf
+                                            <button type="submit" 
+                                                    class="w-full bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                                Hủy booking
+                                            </button>
+                                        </form>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

@@ -128,13 +128,51 @@ class Booking extends Model
         return $this->status === 'pending' && !$this->isPaid();
     }
 
+    public function getCancellationError(): ?string
+    {
+        if ($this->status === 'cancelled') {
+            return 'Đơn đặt chỗ này đã bị hủy trước đó.';
+        }
+
+        if($this->isPaid()) {
+            return 'Đơn đặt chỗ đã được thanh toán, vui lòng yêu cầu hoàn tiền thay vì hủy.';
+        }
+
+        if ($this->tour->start_date) {
+            $startDate = Carbon::parse($this->tour->start_date);
+            
+            if ($startDate->lte(now())) {
+                return 'Tour đã khởi hành hoặc đã kết thúc, không thể hủy.';
+            }
+        }
+
+        return null;
+    }
+
 
     public function canCancel(): bool
     {
         return $this->getCancellationError() === null;
     }
-
     
+    public function cancel()
+    {
+        if (!$this->canCancel()) {
+            return false;
+        }
+
+        $this->update(['status' => 'cancelled']);
+
+        \App\Models\ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'cancelled_booking',
+            'description' => "Đã hủy đặt chỗ #{$this->booking_code}",
+            'properties' => ['booking_id' => $this->id]
+        ]);
+
+        return true;
+    }
+
     /**
      * Confirm the booking.
      */

@@ -201,6 +201,47 @@ class BookingController extends Controller
         return view('bookings.history', compact('bookings', 'reviewedTourIds'));
     }
 
+    /**
+     * Cancel a booking.
+     */
+    public function cancel(Request $request, Booking $booking)
+    {
+        // Check authorization
+        if ($booking->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Load tour
+        $booking->load('tour');
+        
+        // Check if can cancel
+        $error = $booking->getCancellationError();
+        if ($error) {
+            return back()->with('error', $error);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            // Cancel booking
+            $result = $booking->cancel();
+            
+            if (!$result) {
+                return back()->with('error', 'Không thể hủy đặt chỗ này.');
+            }
+
+            DB::commit();
+
+            return redirect()->route('bookings.show', $booking)
+                ->with('success', 'Đã hủy đặt chỗ thành công.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Booking cancellation failed: ' . $e->getMessage());
+            
+            return back()->with('error', 'Có lỗi xảy ra khi hủy đặt chỗ. Vui lòng thử lại.');
+        }
+    }
 
     private function checkAvailability(Tour $tour, int $requiredSlots): bool
     {
