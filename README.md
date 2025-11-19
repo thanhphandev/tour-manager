@@ -70,7 +70,7 @@ Hệ thống quản lý tour du lịch toàn diện với các tính năng đặ
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/your-username/tour-manager.git
+git clone https://github.com/thanhphandev/tour-manager.git
 cd tour-manager
 ```
 
@@ -256,16 +256,6 @@ GOOGLE_REDIRECT_URI=http://localhost:8000/auth/google/callback
 http://localhost:8000/auth/google/callback
 https://yourdomain.com/auth/google/callback
 ```
-
-### 🤖 Gemini AI (Tùy Chọn)
-
-Để tạo itinerary tự động:
-
-```env
-GEMINI_API_KEY=your_gemini_api_key
-```
-
-Lấy API key tại: https://makersuite.google.com/app/apikey
 
 ### 📦 Queue Configuration
 
@@ -697,7 +687,7 @@ php artisan pail
 ### API Endpoints
 
 - Tất cả routes: `php artisan route:list`
-- API documentation: Xem file `routes/api.php` (nếu có)
+- API documentation: Xem file `routes/api.php` (đang phát triển)
 
 ### Architecture
 
@@ -750,7 +740,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Email**: support@tourmanager.com
 - **Documentation**: https://docs.tourmanager.com
-- **Issues**: https://github.com/your-username/tour-manager/issues
+- **Issues**: https://github.com/thanhphandev/tour-manager/issues
 
 ## 🙏 Acknowledgments
 

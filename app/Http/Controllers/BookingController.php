@@ -118,9 +118,7 @@ class BookingController extends Controller
             DB::rollBack();
             Log::error('Booking failed: ' . $e->getMessage());
 
-            $message = $e->getMessage() === "Tour không đủ chỗ trống." 
-                ? $e->getMessage() 
-                : 'Có lỗi xảy ra khi xử lý. Vui lòng thử lại.';
+            $message = $e->getMessage();
 
             return back()->withInput()->with('error', $message);
         }
@@ -213,33 +211,57 @@ class BookingController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $errorReason = $booking->getCancellationError();
-
-        if ($errorReason) {
-            // Trả về đúng lý do đó cho người dùng
-            return back()->with('error', $errorReason);
+        // Load tour để tính toán policy
+        $booking->load('tour');
+        
+        // Lấy cancellation policy
+        $policy = $booking->getCancellationPolicy();
+        
+        if (!$policy['can_cancel']) {
+            return back()->with('error', $policy['reason']);
         }
 
         DB::beginTransaction();
 
         try {
-            $booking->cancel();
+            $result = $booking->cancel();
+            
+            if (!$result['success']) {
+                return back()->with('error', $result['message']);
+            }
 
             DB::commit();
 
-            // Send cancellation email
+            // Send email thông báo
             try {
-                Mail::to($booking->email)->queue(new BookingCancellationMail($booking));
+                if ($result['refund_percent'] > 0) {
+                    // Send email có thông tin refund
+                    Mail::to($booking->email)->queue(
+                        new BookingCancellationMail($booking, $result)
+                    );
+                } else {
+                    // Send email thông thường
+                    Mail::to($booking->email)->queue(
+                        new BookingCancellationMail($booking)
+                    );
+                }
             } catch (\Exception $e) {
-                \Log::error('Failed to send cancellation email: ' . $e->getMessage());
+                Log::error('Failed to send cancellation email: ' . $e->getMessage());
+            }
+
+            // Tạo success message
+            $message = 'Đã hủy đặt chỗ thành công.';
+            if ($result['refund_percent'] > 0) {
+                $message .= " Bạn sẽ được hoàn {$result['refund_percent']}% (" . 
+                    number_format($result['refund_amount']) . " VNĐ) số tiền đã thanh toán.";
             }
 
             return redirect()->route('bookings.show', $booking)
-                ->with('success', 'Đã hủy đặt chỗ thành công.');
+                ->with('success', $message);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Booking cancellation failed: ' . $e->getMessage());
+            Log::error('Booking cancellation failed: ' . $e->getMessage());
             
             return back()->with('error', 'Có lỗi xảy ra khi hủy đặt chỗ. Vui lòng thử lại.');
         }
