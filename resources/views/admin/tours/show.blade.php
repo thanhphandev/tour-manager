@@ -60,7 +60,7 @@
                     </div>
                     <div>
                         <dt class="text-sm font-medium text-gray-500">Số Người Tối Đa</dt>
-                        <dd class="mt-1 text-sm text-gray-900">{{ $tour->max_people ?? 'Không giới hạn' }}</dd>
+                        <dd class="mt-1 text-sm text-gray-900">{{ $tour->max_people }}</dd>
                     </div>
                     <div>
                         <dt class="text-sm font-medium text-gray-500">Trạng Thái</dt>

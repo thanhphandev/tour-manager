@@ -55,7 +55,7 @@ class SendReviewRequests extends Command
         foreach ($bookings as $booking) {
             try {
                 Mail::to($booking->user->email)
-                    ->send(new ReviewRequestMail($booking));
+                    ->queue(new ReviewRequestMail($booking));
                 
                 $this->info("✓ Đã gửi email yêu cầu review đến {$booking->user->email} cho tour \"{$booking->tour->name}\"");
                 $sent++;

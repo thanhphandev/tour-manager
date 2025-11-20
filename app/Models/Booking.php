@@ -134,6 +134,10 @@ class Booking extends Model
             return 'Đơn đặt chỗ này đã bị hủy trước đó.';
         }
 
+        if ($this->created_at && $this->created_at->diffInHours(now()) > 24) {
+            return 'Không thể hủy đặt chỗ sau 24 giờ kể từ khi đặt tour.';
+        }
+
         if($this->isPaid()) {
             return 'Đơn đặt chỗ đã được thanh toán, vui lòng yêu cầu hoàn tiền thay vì hủy.';
         }

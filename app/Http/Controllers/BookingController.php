@@ -139,7 +139,7 @@ class BookingController extends Controller
         // Check if user can write review
         $canReview = false;
         if (auth()->check() && !auth()->user()->isAdmin()) {
-            $hasBooking = $booking->isPaid() && $booking->status === 'confirmed';
+            $hasBooking = $booking->isPaid() && $booking->status === 'confirmed' && $booking->tour->end_date < now();
             $hasReviewed = auth()->user()->reviews()
                 ->where('tour_id', $booking->tour_id)
                 ->exists();

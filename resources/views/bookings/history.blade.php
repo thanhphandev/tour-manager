@@ -203,7 +203,7 @@
                                         </a>
                                         @endif
 
-                                        @if($booking->isPaid() && $booking->status === 'confirmed' && !in_array($booking->tour_id, $reviewedTourIds))
+                                        @if($booking->isPaid() && $booking->status === 'confirmed' && !in_array($booking->tour_id, $reviewedTourIds) && $booking->tour->end_date < now())
                                         <a href="{{ route('reviews.create', $booking->tour) }}#write-review" 
                                            class="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white px-6 py-3 rounded-xl font-semibold text-center transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
