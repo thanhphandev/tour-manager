@@ -4,7 +4,9 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "screenshots": "node capture_screenshots.js",
+        "screenshots:quick": "node capture_quick.js"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.2",

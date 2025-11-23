@@ -42,11 +42,20 @@ class TourFactory extends Factory
                 return $priceMultiplier * 50000;
             },
             'price_child' => function (array $attributes) {
-                return $attributes['price_adult'] * fake()->randomFloat(2, 0.5, 0.75);
+                $fraction = fake()->randomFloat(2, 0.5, 0.75); // 50%–75% of adult
+                $price = $attributes['price_adult'] * $fraction;
+                
+                // Round to nearest 50,000
+                return round($price / 50000) * 50000;
             },
             'price_infant' => function (array $attributes) {
-                return $attributes['price_adult'] * fake()->randomFloat(2, 0.1, 0.2);
+                $fraction = fake()->randomFloat(2, 0, 0.05); // 0%–5% of adult
+                $price = $attributes['price_adult'] * $fraction;
+                
+                // Round to nearest 50,000
+                return round($price / 50000) * 50000;
             },
+
             
             // THỜI GIAN
             'duration_days' => function (array $attributes) {

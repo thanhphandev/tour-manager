@@ -17,8 +17,8 @@
             <!-- Header -->
             <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
                 <div class="flex items-start gap-6">
-                    @if($tour->primaryImage)
-                        <img src="{{ Storage::url($tour->primaryImage->image_path) }}" 
+                    @if($tour->getThumbnailUrl())
+                        <img src="{{ $tour->getThumbnailUrl() }}" 
                              alt="{{ $tour->name }}"
                              class="w-32 h-32 object-cover rounded-xl shadow-lg">
                     @else
