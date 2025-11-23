@@ -26,6 +26,8 @@ return new class extends Migration
             $table->integer('infants')->default(0);
             $table->text('special_requests')->nullable();
             $table->enum('status', ['pending', 'confirmed', 'cancelled'])->default('pending');
+            $table->timestamp('reminded_at')->nullable();
+            $table->timestamp('review_request_sent_at')->nullable();
             $table->string('booking_code')->unique();
             $table->decimal('total_amount', 10, 2);
             $table->timestamps();

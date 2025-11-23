@@ -2,37 +2,33 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Booking;
-use Carbon\Carbon;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\BookingCancellationMail;
 
 class CancelPendingBookings extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'bookings:cancel-pending';
+    protected $description = 'Hủy các booking ở trạng thái Pending quá 24 giờ';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Cancel all bookings with pending status to free up slots';
-
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
-        $pendingBookings = Booking::where('status', 'pending')->get();
+        // 1. Tìm các booking pending quá 24h
+        $expiredBookings = Booking::where('status', 'pending')
+            ->where('created_at', '<', now()->subHours(24))
+            ->get();
+
         $count = 0;
-        foreach ($pendingBookings as $booking) {
+
+        foreach ($expiredBookings as $booking) {
             $booking->update(['status' => 'cancelled']);
+            
+            Mail::to($booking->email)->queue(new BookingCancellationMail($booking, 'Đã quá hạn thanh toán 24h', null));
+            
             $count++;
         }
-        $this->info("Đã hủy $count booking trạng thái chờ xác nhận.");
+
+        $this->info("Đã hủy tự động {$count} booking quá hạn thanh toán.");
     }
 }

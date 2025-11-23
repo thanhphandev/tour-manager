@@ -136,7 +136,7 @@ class BookingController extends Controller
     {
         // Check authorization
         if ($booking->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
-            abort(403, 'Unauthorized action.');
+            abort(403, 'Bạn không có quyền truy cập.');
         }
 
         $booking->load(['tour.destination', 'tour.images', 'payments']);

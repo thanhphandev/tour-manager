@@ -98,7 +98,7 @@ class AdminPaymentController extends Controller
             // Send cancellation email to customer
             try {
                 Mail::to($booking->email)
-                    ->send(new BookingCancellationMail($booking, $request->reason, $payment));
+                    ->queue(new BookingCancellationMail($booking, $request->reason, $payment));
             } catch (\Exception $mailException) {
                 \Log::error('Failed to send cancellation email: ' . $mailException->getMessage());
                 // Continue with refund process even if email fails

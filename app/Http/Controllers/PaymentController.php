@@ -104,7 +104,7 @@ class PaymentController extends Controller
 
             // Gửi email xác nhận thanh toán
             try {
-                Mail::to($booking->email)->send(new PaymentConfirmationMail($payment));
+                Mail::to($booking->email)->queue(new PaymentConfirmationMail($payment));
             } catch (\Exception $e) {
                 Log::error('Failed to send payment confirmation email: ' . $e->getMessage());
             }
@@ -349,7 +349,7 @@ class PaymentController extends Controller
 
             // Send confirmation email
             try {
-                Mail::to($booking->email)->send(new PaymentConfirmationMail($payment));
+                Mail::to($booking->email)->queue(new PaymentConfirmationMail($payment));
             } catch (\Exception $e) {
                 Log::error('Failed to send payment confirmation email', [
                     'error' => $e->getMessage(),
@@ -517,7 +517,7 @@ class PaymentController extends Controller
 
             // Send confirmation email
             try {
-                Mail::to($booking->email)->send(new PaymentConfirmationMail($payment));
+                Mail::to($booking->email)->queue(new PaymentConfirmationMail($payment));
             } catch (\Exception $e) {
                 Log::error('Failed to send payment confirmation email: ' . $e->getMessage());
             }

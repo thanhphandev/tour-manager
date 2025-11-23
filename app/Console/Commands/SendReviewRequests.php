@@ -3,49 +3,39 @@
 namespace App\Console\Commands;
 
 use App\Models\Booking;
-use App\Models\Review;
 use App\Mail\ReviewRequestMail;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 class SendReviewRequests extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'tour:send-review-requests {--days=2 : Days after tour completion}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Send review request emails to customers who completed their tours';
 
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
-        $days = $this->option('days');
-        $targetDate = Carbon::now()->subDays($days)->format('Y-m-d');
-        
-        $this->info("Đang tìm các tour kết thúc vào ngày {$targetDate}...");
+        $days = (int) $this->option('days');
 
-        // Lấy bookings đã hoàn thành, chưa có review
-        $bookings = Booking::with(['tour', 'user'])
+        if ($days < 0) {
+            $this->error("The --days option cannot be negative.");
+            return 1;
+        }
+
+        $targetDate = Carbon::now()->subDays($days)->toDateString();
+
+        $this->info("Finding tours that ended on {$targetDate}...");
+
+        $bookings = Booking::with(['tour'])
             ->where('status', 'confirmed')
+            ->whereDate('end_date', $targetDate)
             ->whereDoesntHave('review')
-            ->whereHas('tour', function($query) use ($targetDate) {
-                $query->whereDate('end_date', $targetDate);
-            })
+            ->whereNull('review_request_sent_at')   // make sure only sent once
             ->get();
 
         if ($bookings->isEmpty()) {
-            $this->info('Không có booking nào cần gửi yêu cầu review.');
+            $this->info('No bookings require review requests.');
             return 0;
         }
 
@@ -53,22 +43,47 @@ class SendReviewRequests extends Command
         $failed = 0;
 
         foreach ($bookings as $booking) {
+
+            // Skip missing email
+            if (!$booking->email) {
+                $this->warn("Skipping booking ID {$booking->id} — no email.");
+                $failed++;
+                continue;
+            }
+
+            // Skip missing tour (data corruption)
+            if (!$booking->tour) {
+                $this->warn("Skipping booking ID {$booking->id} — missing related tour.");
+                $failed++;
+                continue;
+            }
+
             try {
-                Mail::to($booking->user->email)
-                    ->queue(new ReviewRequestMail($booking));
-                
-                $this->info("✓ Đã gửi email yêu cầu review đến {$booking->user->email} cho tour \"{$booking->tour->name}\"");
+                Mail::to($booking->email)->queue(new ReviewRequestMail($booking));
+
+                // Mark as sent to avoid duplicates
+                $booking->update(['review_request_sent_at' => now()]);
+
+                $this->info("✓ Sent review request to {$booking->email} for tour \"{$booking->tour->name}\"");
                 $sent++;
-            } catch (\Exception $e) {
-                $this->error("✗ Lỗi khi gửi email đến {$booking->user->email}: {$e->getMessage()}");
+
+            } catch (\Throwable $e) {
+                $this->error("✗ Failed to send to {$booking->email}: {$e->getMessage()}");
+
+                Log::error('Review request email failed', [
+                    'booking_id' => $booking->id,
+                    'email' => $booking->email,
+                    'error' => $e->getMessage(),
+                ]);
+
                 $failed++;
             }
         }
 
-        $this->info("\n=== Tổng kết ===");
-        $this->info("Đã gửi thành công: {$sent}");
+        $this->info("\n=== Summary ===");
+        $this->info("Successfully sent: {$sent}");
         if ($failed > 0) {
-            $this->warn("Thất bại: {$failed}");
+            $this->warn("Failed: {$failed}");
         }
 
         return 0;

@@ -20,16 +20,20 @@
                         <h2 class="text-xl font-semibold text-gray-900 mb-2">Trạng thái đặt chỗ</h2>
                         <div class="flex items-center gap-4">
                             <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold
-                                {{ $booking->status === 'confirmed' ? 'bg-green-100 text-green-800' : '' }}
-                                {{ $booking->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                {{ $booking->status === 'cancelled' ? 'bg-red-100 text-red-800' : '' }}">
+                                {{ $booking->status_label === 'completed' ? 'bg-green-100 text-green-800' : '' }}
+                                {{ $booking->status_label === 'confirmed' ? 'bg-green-100 text-green-800' : '' }}
+                                {{ $booking->status_label === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                {{ $booking->status_label === 'cancelled' ? 'bg-red-100 text-red-800' : '' }}">
                                 <span class="w-2 h-2 rounded-full mr-2
-                                    {{ $booking->status === 'confirmed' ? 'bg-green-600' : '' }}
-                                    {{ $booking->status === 'pending' ? 'bg-yellow-600' : '' }}
-                                    {{ $booking->status === 'cancelled' ? 'bg-red-600' : '' }}"></span>
-                                {{ $booking->status === 'confirmed' ? 'Đã xác nhận' : '' }}
-                                {{ $booking->status === 'pending' ? 'Chờ xác nhận' : '' }}
-                                {{ $booking->status === 'cancelled' ? 'Đã hủy' : '' }}
+                                    {{ $booking->status_label === 'completed' ? 'bg-green-600' : '' }}
+                                    {{ $booking->status_label === 'confirmed' ? 'bg-green-600' : '' }}
+                                    {{ $booking->status_label === 'pending' ? 'bg-yellow-600' : '' }}
+                                    {{ $booking->status_label === 'cancelled' ? 'bg-red-600' : '' }}">
+                                </span>
+                                {{ $booking->status_label === 'completed' ? 'Đã hoàn thành' : '' }}
+                                {{ $booking->status_label === 'confirmed' ? 'Đã xác nhận' : '' }}
+                                {{ $booking->status_label === 'pending' ? 'Chờ xác nhận' : '' }}
+                                {{ $booking->status_label === 'cancelled' ? 'Đã hủy' : '' }}
                             </span>
                            
                         </div>

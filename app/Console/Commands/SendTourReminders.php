@@ -7,42 +7,34 @@ use App\Mail\TourReminderMail;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class SendTourReminders extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'tour:send-reminders {--days=3 : Days before departure}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Send tour reminder emails to customers whose tours are departing soon';
 
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
         $days = (int) $this->option('days');
-        $targetDate = Carbon::now()->addDays($days)->format('Y-m-d');
-        
-        $this->info("Đang tìm các tour khởi hành vào ngày {$targetDate}...");
+
+        if ($days < 0) {
+            $this->error("The --days option cannot be negative.");
+            return 1;
+        }
+
+        $targetDate = Carbon::now()->addDays($days)->toDateString();
+
+        $this->info("Finding tours that start on {$targetDate}...");
 
         $bookings = Booking::with(['tour', 'user'])
             ->where('status', 'confirmed')
-            ->whereHas('tour', function($query) use ($targetDate) {
-                $query->whereDate('start_date', $targetDate);
-            })
+            ->whereDate('start_date', $targetDate)
+            ->whereNull('reminded_at')   // prevent duplicate reminders
             ->get();
 
         if ($bookings->isEmpty()) {
-            $this->info('Không có tour nào cần gửi nhắc nhở.');
+            $this->info('No tours require reminders.');
             return 0;
         }
 
@@ -50,22 +42,48 @@ class SendTourReminders extends Command
         $failed = 0;
 
         foreach ($bookings as $booking) {
+
+            // Skip if no email available
+            if (!$booking->email) {
+                $this->warn("Skipping booking ID {$booking->id} — no email found.");
+                $failed++;
+                continue;
+            }
+
+            // Skip if relationship is missing (data corruption)
+            if (!$booking->tour) {
+                $this->warn("Skipping booking ID {$booking->id} — missing related tour.");
+                $failed++;
+                continue;
+            }
+
             try {
-                Mail::to($booking->user->email)
-                    ->send(new TourReminderMail($booking));
-                
-                $this->info("✓ Đã gửi email nhắc nhở đến {$booking->user->email} cho tour \"{$booking->tour->name}\"");
+                Mail::to($booking->email)->queue(new TourReminderMail($booking));
+
+                // Mark as sent to avoid sending again tomorrow
+                $booking->update(['reminded_at' => now()]);
+
+                $this->info("✓ Reminded {$booking->email} for tour \"{$booking->tour->name}\"");
                 $sent++;
-            } catch (\Exception $e) {
-                $this->error("✗ Lỗi khi gửi email đến {$booking->user->email}: {$e->getMessage()}");
+
+            } catch (\Throwable $e) {
+                $this->error("✗ Failed to remind {$booking->email}: {$e->getMessage()}");
+
+                // Log full error for debugging
+                Log::error('Tour reminder email failure', [
+                    'booking_id' => $booking->id,
+                    'email' => $booking->email,
+                    'error' => $e->getMessage(),
+                ]);
+
                 $failed++;
             }
         }
 
-        $this->info("\n=== Tổng kết ===");
-        $this->info("Đã gửi thành công: {$sent}");
+        $this->info("\n=== Summary ===");
+        $this->info("Successfully sent: {$sent}");
         if ($failed > 0) {
-            $this->warn("Thất bại: {$failed}");
+            $this->warn("Failed: {$failed}");
         }
 
         return 0;

@@ -24,6 +24,8 @@ class Booking extends Model
         'infants',
         'special_requests',
         'status',
+        'reminded_at', 
+        'review_request_sent_at',
         'booking_code',
         'total_amount',
     ];
