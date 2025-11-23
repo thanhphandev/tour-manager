@@ -29,7 +29,7 @@ class SendTourReminders extends Command
      */
     public function handle()
     {
-        $days = $this->option('days');
+        $days = (int) $this->option('days');
         $targetDate = Carbon::now()->addDays($days)->format('Y-m-d');
         
         $this->info("Đang tìm các tour khởi hành vào ngày {$targetDate}...");

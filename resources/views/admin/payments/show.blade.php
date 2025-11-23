@@ -132,7 +132,7 @@
             <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-lg font-bold text-gray-900 mb-4">Tour</h3>
                 @if($payment->booking->tour->thumbnail)
-                    <img src="{{ Storage::url($payment->booking->tour->thumbnail) }}" 
+                    <img src="{{ App\Facades\ImageHelper::getUrl($payment->booking->tour->thumbnail) }}" 
                          alt="{{ $payment->booking->tour->name }}"
                          class="w-full h-32 object-cover rounded-lg mb-4">
                 @endif

@@ -217,20 +217,28 @@ class Tour extends Model
      */
     public function getThumbnailUrl()
     {
-        if ($this->thumbnail) {
-            return asset('storage/' . $this->thumbnail);
+        $imagePath = $this->thumbnail;
+
+        if (!$imagePath && $this->primaryImage) {
+            $imagePath = $this->primaryImage->image_path;
         }
 
-        if ($this->primaryImage) {
-            return asset('storage/' . $this->primaryImage->path);
+        if (!$imagePath && $this->images->isNotEmpty()) {
+            $imagePath = $this->images->first()->image_path;
         }
 
-        if ($this->images->isNotEmpty()) {
-            return asset('storage/' . $this->images->first()->path);
+        if ($imagePath) {
+            if (Str::startsWith($imagePath, ['http://', 'https://'])) {
+                return $imagePath;
+            }
+            return asset('storage/' . $imagePath);
         }
 
-        return null;
+        // Ảnh mặc định nếu không có ảnh nào (Placeholder đẹp)
+        return 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
     }
+
+
 
     /**
      * Scope a query to only include active tours.

@@ -737,6 +737,28 @@
             }
         });
 
+        // Paste images from clipboard (multiple)
+        document.addEventListener('paste', function (event) {
+            if (!event.clipboardData) return;
+            const items = event.clipboardData.items;
+            const files = [];
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    const file = items[i].getAsFile();
+                    if (file) files.push(file);
+                }
+            }
+            if (files.length > 0) {
+                // Append to current files
+                const input = imagesInput;
+                const dt = new DataTransfer();
+                Array.from(input.files).forEach(f => dt.items.add(f));
+                files.forEach(f => dt.items.add(f));
+                input.files = dt.files;
+                input.dispatchEvent(new Event('change'));
+            }
+        });
+
         function removeImage(index) {
             const dt = new DataTransfer();
             const files = Array.from(imagesInput.files);

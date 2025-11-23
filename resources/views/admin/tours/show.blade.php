@@ -115,7 +115,7 @@
             @if($tour->thumbnail)
             <div class="bg-white rounded-lg shadow-md p-6">
                 <h2 class="text-xl font-semibold mb-4">Ảnh Đại Diện</h2>
-                <img src="{{ asset('storage/' . $tour->thumbnail) }}" 
+                <img src="{{ App\Facades\ImageHelper::getUrl($tour->thumbnail) }}" 
                      alt="{{ $tour->name }}" 
                      class="w-full rounded-lg">
             </div>
@@ -128,7 +128,7 @@
                 <div class="grid grid-cols-2 gap-2">
                     @foreach($tour->images as $image)
                         <div class="relative">
-                            <img src="{{ asset('storage/' . $image->image_path) }}" 
+                            <img src="{{ App\Facades\ImageHelper::getUrl($image->image_path) }}" 
                                  alt="{{ $image->alt_text }}" 
                                  class="w-full h-24 object-cover rounded">
                             @if($image->is_primary)

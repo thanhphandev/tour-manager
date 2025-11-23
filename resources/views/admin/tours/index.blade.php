@@ -128,7 +128,7 @@
                                             <div class="flex-shrink-0 h-16 w-24 relative rounded-lg overflow-hidden">
                                                 @if ($tour->thumbnail)
                                                     <img class="h-full w-full object-cover"
-                                                        src="{{ asset('storage/' . $tour->thumbnail) }}"
+                                                        src="{{ App\Facades\ImageHelper::getUrl($tour->thumbnail) }}"
                                                         alt="{{ $tour->name }}">
                                                 @else
                                                     <div

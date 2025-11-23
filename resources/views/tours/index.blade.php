@@ -160,8 +160,8 @@
                                 <article class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
                                     <!-- Image -->
                                     <div class="relative h-56 overflow-hidden">
-                                        @if($tour->primaryImage)
-                                            <img src="{{ Storage::url($tour->primaryImage->image_path) }}"
+                                        @if($tour->getThumbnailUrl())
+                                            <img src="{{ $tour->getThumbnailUrl() }}"
                                                  alt="{{ $tour->name }}"
                                                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                                         @else

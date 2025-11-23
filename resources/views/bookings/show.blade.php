@@ -48,7 +48,7 @@
             <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
                 <div class="md:flex">
                     <div class="md:w-1/3">
-                        <img src="{{ $booking->tour->thumbnail ? asset('storage/' . $booking->tour->thumbnail) : 'https://via.placeholder.com/400x300' }}" 
+                        <img src="{{ $booking->tour->getThumbnailUrl() ?? 'https://via.placeholder.com/400x300' }}" 
                              alt="{{ $booking->tour->name }}" 
                              class="w-full h-64 object-cover">
                     </div>

@@ -28,7 +28,7 @@ return new class extends Migration
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->enum('status', ['active', 'inactive', 'sold_out'])->default('active');
-            $table->string('thumbnail')->nullable();
+            $table->text('thumbnail')->nullable();
             $table->boolean('featured')->default(false);
             $table->timestamps();
         });

@@ -7,91 +7,87 @@ use App\Models\Destination;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Tour>
- */
 class TourFactory extends Factory
 {
     protected $model = Tour::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
-        $name = fake()->sentence(4);
-        
         return [
-            'destination_id' => Destination::factory(),
-            'name' => $name,
-            'slug' => Str::slug($name),
-            'short_description' => fake()->sentence(10),
-            'full_description' => fake()->paragraph(5),
-            'itinerary' => $this->generateItinerary(),
-            'price_adult' => fake()->numberBetween(1000000, 5000000),
-            'price_child' => fake()->numberBetween(500000, 2500000),
-            'price_infant' => fake()->numberBetween(0, 500000),
-            'duration_days' => fake()->numberBetween(2, 7),
-            'duration_nights' => fake()->numberBetween(1, 6),
-            'max_people' => fake()->numberBetween(10, 50),
-            'start_date' => now()->addDays(7),
-            'end_date' => now()->addDays(14),
-            'status' => 'active',
-            'thumbnail' => null,
+            // LIÊN KẾT
+            'destination_id' => function () {
+                return Destination::query()->inRandomOrder()->first()->id ?? Destination::factory();
+            },
+
+            // THÔNG TIN CƠ BẢN
+            'name' => function (array $attributes) {
+                $destination = Destination::find($attributes['destination_id']);
+                $durationDays = fake()->numberBetween(2, 7);
+                $tourNameTemplate = fake()->randomElement([
+                    'Hành trình Khám phá', 'Nghỉ dưỡng Cao cấp', 'Tour Tiết kiệm', 'Phiêu lưu Mạo hiểm', 'Trải nghiệm Văn hóa', 'Chuyến đi Gia đình', 'Tour Lãng mạn'
+                ]);
+                return $tourNameTemplate . ' ' . ($destination->name ?? 'Vietnam') . ' ' . $durationDays . ' Ngày';
+            },
+            'slug' => function (array $attributes) {
+                $uniqueSlugSuffix = Str::random(6);
+                return Str::slug($attributes['name']) . '-' . $uniqueSlugSuffix;
+            },
+            'short_description' => fake()->sentence(15),
+            'full_description' => fake()->paragraphs(4, true),
+            'itinerary' => fake()->paragraphs(6, true), // Lịch trình chi tiết giả
+            
+            // GIÁ
+            'price_adult' => function () {
+                $priceMultiplier = fake()->numberBetween(30, 200);
+                return $priceMultiplier * 50000;
+            },
+            'price_child' => function (array $attributes) {
+                return $attributes['price_adult'] * fake()->randomFloat(2, 0.5, 0.75);
+            },
+            'price_infant' => function (array $attributes) {
+                return $attributes['price_adult'] * fake()->randomFloat(2, 0.1, 0.2);
+            },
+            
+            // THỜI GIAN
+            'duration_days' => function (array $attributes) {
+                 // Extract duration from name if possible, or random. 
+                 // But name depends on duration. 
+                 // To avoid circular dependency, let's just parse it from name or regenerate.
+                 // Simpler: Generate duration first? No, attributes are evaluated in order? 
+                 // Actually, 'name' closure generated a duration but didn't save it.
+                 // Let's just random it again or parse it. Parsing is safer.
+                 if (preg_match('/(\d+) Ngày/', $attributes['name'], $matches)) {
+                     return (int)$matches[1];
+                 }
+                 return fake()->numberBetween(2, 7);
+            },
+            'duration_nights' => function (array $attributes) {
+                return $attributes['duration_days'] - 1;
+            },
+            'max_people' => fake()->numberBetween(15, 40),
+            
+            // NGÀY KHỞI HÀNH
+            'start_date' => fake()->dateTimeBetween('+1 week', '+1 year'),
+            'end_date' => function (array $attributes) {
+                $startDate = $attributes['start_date'];
+                $durationDays = $attributes['duration_days'];
+                return (clone $startDate)->modify("+{$durationDays} days");
+            },
+            
+            // HÌNH ẢNH
+            'thumbnail' => function (array $attributes) {
+                $destination = Destination::find($attributes['destination_id']);
+                $slug = $destination->slug ?? 'default';
+                
+                $destinationsData = \Database\Seeders\DestinationData::getDestinations();
+                $images = $destinationsData[$slug]['images'] ?? \Database\Seeders\DestinationData::getDefaultImages();
+                
+                return fake()->randomElement($images);
+            },
+
+            // TRẠNG THÁI VÀ ĐẶC TRƯNG
+            'status' => fake()->randomElement(['active']),
             'featured' => fake()->boolean(30),
         ];
-    }
-
-    /**
-     * Indicate that the tour is inactive.
-     */
-    public function inactive(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'status' => 'inactive',
-        ]);
-    }
-
-    /**
-     * Indicate that the tour is featured.
-     */
-    public function featured(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'featured' => true,
-        ]);
-    }
-
-    /**
-     * Indicate that the tour has ended.
-     */
-    public function ended(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'start_date' => now()->subDays(14),
-            'end_date' => now()->subDays(7),
-        ]);
-    }
-
-    /**
-     * Indicate that the tour is fully booked.
-     */
-    public function fullyBooked(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'max_people' => 0,
-        ]);
-    }
-
-    /**
-     * Generate sample itinerary.
-     */
-    private function generateItinerary(): string
-    {
-        return "## Ngày 1: Khởi hành\n\n" . fake()->paragraph(2) .
-               "\n\n## Ngày 2: Tham quan\n\n" . fake()->paragraph(2) .
-               "\n\n## Ngày 3: Về nhà\n\n" . fake()->paragraph(2);
     }
 }

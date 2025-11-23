@@ -100,7 +100,7 @@
                         <div class="md:flex">
                             <!-- Tour Image -->
                             <div class="md:w-1/4">
-                                <img src="{{ $booking->tour->thumbnail ? asset('storage/' . $booking->tour->thumbnail) : 'https://via.placeholder.com/400x300' }}" 
+                                <img src="{{ $booking->tour->getThumbnailUrl() ?? 'https://via.placeholder.com/400x300' }}" 
                                      alt="{{ $booking->tour->title }}" 
                                      class="w-full h-64 md:h-full object-cover">
                             </div>

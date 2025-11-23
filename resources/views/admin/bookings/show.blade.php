@@ -201,8 +201,8 @@
                 </div>
                 <div class="p-6">
                     <div class="flex gap-6">
-                        @if($booking->tour->thumbnail)
-                        <img src="{{ asset('storage/' . $booking->tour->thumbnail) }}" 
+                        @if($booking->tour->getThumbnailUrl())
+                        <img src="{{ $booking->tour->getThumbnailUrl() }}" 
                              alt="{{ $booking->tour->name }}" 
                              class="w-48 h-32 object-cover rounded-xl shadow-md">
                         @endif

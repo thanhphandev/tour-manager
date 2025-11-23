@@ -27,7 +27,7 @@
     
     <div class="info-row">
         <span class="info-label">Thời gian:</span>
-        <span class="info-value">{{ $booking->tour->duration }} ngày {{ $booking->tour->duration - 1 }} đêm</span>
+        <span class="info-value">{{ $booking->tour->duration_days }} ngày {{ $booking->tour->duration_nights }} đêm</span>
     </div>
     
     <div class="info-row">

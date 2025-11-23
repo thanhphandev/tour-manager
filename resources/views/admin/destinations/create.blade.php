@@ -159,5 +159,32 @@
                 reader.readAsDataURL(file);
             }
         });
+
+        // Paste image from clipboard
+        document.addEventListener('paste', function (event) {
+            if (!event.clipboardData) return;
+            const items = event.clipboardData.items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    const file = items[i].getAsFile();
+                    if (file) {
+                        // Gán file vào input file
+                        const input = document.getElementById('image');
+                        // Tạo DataTransfer để set file cho input
+                        const dt = new DataTransfer();
+                        dt.items.add(file);
+                        input.files = dt.files;
+                        // Hiển thị preview
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const preview = document.getElementById('imagePreview');
+                            preview.querySelector('img').src = e.target.result;
+                            preview.classList.remove('hidden');
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                }
+            }
+        });
     </script>
 </x-admin-layout>

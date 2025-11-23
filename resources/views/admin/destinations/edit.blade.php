@@ -94,7 +94,7 @@
                             Hình Ảnh Điểm Đến
                         </label>
                         <div id="imagePreview" class="{{ $destination->image ? '' : 'hidden' }} mb-3">
-                            <img src="{{ $destination->image ? asset('storage/' . $destination->image) : '' }}" 
+                            <img src="{{ $destination->image ? App\Facades\ImageHelper::getUrl($destination->image) : '' }}" 
                                  alt="Preview" 
                                  class="w-full h-48 object-cover rounded-lg">
                         </div>
@@ -186,6 +186,33 @@
                     preview.classList.remove('hidden');
                 }
                 reader.readAsDataURL(file);
+            }
+        });
+
+        // Paste image from clipboard
+        document.addEventListener('paste', function (event) {
+            if (!event.clipboardData) return;
+            const items = event.clipboardData.items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    const file = items[i].getAsFile();
+                    if (file) {
+                        // Gán file vào input file
+                        const input = document.getElementById('image');
+                        // Tạo DataTransfer để set file cho input
+                        const dt = new DataTransfer();
+                        dt.items.add(file);
+                        input.files = dt.files;
+                        // Hiển thị preview
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const preview = document.getElementById('imagePreview');
+                            preview.querySelector('img').src = e.target.result;
+                            preview.classList.remove('hidden');
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                }
             }
         });
     </script>

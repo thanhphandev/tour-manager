@@ -16,13 +16,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
 
+        // Create Test User
         User::factory()->create([
             'name' => 'Phan Văn Thành',
-            'email' => 'thanhphanvan@gmail.com',
+            'email' => 'thanh041610@gmail.com',
             'password' => Hash::make('123'),
-            'is_admin' => true,
+            'is_admin' => false,
             'avatar' => 'https://api.dicebear.com/9.x/adventurer/svg?seed=PhanVanThanh',
         ]);
 
@@ -30,8 +30,11 @@ class DatabaseSeeder extends Seeder
             DestinationSeeder::class,
             TourSeeder::class,
             TourImageSeeder::class,
-            SettingSeeder::class,
+            // SettingSeeder::class,
             AdminUserSeeder::class,
+            UserSeeder::class,
+            BookingSeeder::class,
+            ReviewSeeder::class,
         ]);
     }
 }

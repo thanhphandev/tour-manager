@@ -15,8 +15,8 @@
                             <div class="p-6">
                                 <!-- Tour Info -->
                                 <div class="flex items-start gap-4 mb-4 pb-4 border-b border-gray-200">
-                                    @if($review->tour->primaryImage)
-                                        <img src="{{ Storage::url($review->tour->primaryImage->image_path) }}" 
+                                    @if($review->tour->getThumbnailUrl())
+                                        <img src="{{ $review->tour->getThumbnailUrl() }}" 
                                              alt="{{ $review->tour->name }}"
                                              class="w-20 h-20 object-cover rounded-lg shadow">
                                     @else

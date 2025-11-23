@@ -1,12 +1,8 @@
 <x-client-layout>
     <!-- Hero Section with Image -->
     <section class="relative h-[500px] overflow-hidden">
-        @if($tour->primaryImage)
-            <img src="{{ Storage::url($tour->primaryImage->image_path) }}" 
-                 alt="{{ $tour->name }}"
-                 class="w-full h-full object-cover">
-        @elseif($tour->thumbnail)
-            <img src="{{ Storage::url($tour->thumbnail) }}" 
+        @if($tour->getThumbnailUrl())
+            <img src="{{ $tour->getThumbnailUrl() }}" 
                  alt="{{ $tour->name }}"
                  class="w-full h-full object-cover">
         @else
@@ -140,7 +136,7 @@
                             <div class="relative h-96 rounded-xl overflow-hidden mb-4 group cursor-pointer" @click="lightbox = true">
                                 @foreach($tour->images as $index => $image)
                                     <img x-show="activeImage === {{ $index }}" 
-                                         src="{{ Storage::url($image->image_path) }}" 
+                                         src="{{ App\Facades\ImageHelper::getUrl($image->image_path) }}" 
                                          alt="{{ $image->alt_text ?? $tour->name }}"
                                          class="w-full h-full object-cover">
                                 @endforeach
@@ -159,7 +155,7 @@
                                     <div @click="activeImage = {{ $index }}" 
                                          :class="activeImage === {{ $index }} ? 'ring-4 ring-indigo-600' : 'opacity-60 hover:opacity-100'"
                                          class="relative h-24 rounded-lg overflow-hidden cursor-pointer transition-all">
-                                        <img src="{{ Storage::url($image->image_path) }}" 
+                                        <img src="{{ App\Facades\ImageHelper::getUrl($image->image_path) }}" 
                                              alt="{{ $image->alt_text ?? $tour->name }}"
                                              class="w-full h-full object-cover">
                                     </div>
@@ -176,13 +172,16 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                     </svg>
                                 </button>
-                                <img :src="'{{ Storage::url('') }}' + [
-                                    @foreach($tour->images as $index => $image)
-                                        '{{ $image->image_path }}'{{ !$loop->last ? ',' : '' }}
-                                    @endforeach
-                                ][activeImage]" 
-                                     alt="Tour Image"
-                                     class="max-h-full max-w-full object-contain">
+                                <img
+                                    :src="[
+                                        @foreach($tour->images as $image)
+                                            '{{ App\Facades\ImageHelper::getUrl($image->image_path) }}',
+                                        @endforeach
+                                    ][activeImage]"
+                                    alt="Tour Image"
+                                    class="max-h-full max-w-full object-contain"
+                                />
+
                             </div>
                         </div>
                     @endif
@@ -421,11 +420,12 @@
                                     ->where('tour_id', $tour->id)
                                     ->where('status', 'confirmed')
                                     ->exists();
+                                $hasEndedTour = $tour->end_date < now();
                                 $hasReviewed = auth()->user()->reviews()
                                     ->where('tour_id', $tour->id)
                                     ->exists();
                             @endphp
-                            @if($hasBooking && !$hasReviewed)
+                            @if($hasBooking && $hasEndedTour && !$hasReviewed)
                                 <a href="{{ route('reviews.create', $tour) }}" id="write-review" 
                                    class="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
                                     <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tour_images', function (Blueprint $table) {
             $table->id();
             $table->foreignId(('tour_id'))->constrained()->onDelete('cascade');
-            $table->string('image_path');
+            $table->text('image_path');
             $table->string(('alt_text'))->nullable();
             $table->boolean('is_primary')->default(false);
             $table->integer('order')->default(0);

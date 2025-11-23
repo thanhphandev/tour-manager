@@ -28,7 +28,7 @@
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap">
                         @if($destination->image)
-                            <img src="{{ asset('storage/' . $destination->image) }}" 
+                            <img src="{{ App\Facades\ImageHelper::getUrl($destination->image) }}" 
                                  alt="{{ $destination->name }}" 
                                  class="h-12 w-12 rounded-full object-cover">
                         @else

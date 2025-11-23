@@ -397,7 +397,7 @@
                                 @if($tour->thumbnail)
                                     <div class="mt-2 mb-4">
                                         <p class="text-xs text-gray-500 mb-2">Ảnh hiện tại:</p>
-                                        <img src="{{ asset('storage/' . $tour->thumbnail) }}" alt="Current thumbnail" class="w-48 h-32 object-cover rounded-lg border border-gray-300">
+                                        <img src="{{ App\Facades\ImageHelper::getUrl($tour->thumbnail) }}" alt="Current thumbnail" class="w-48 h-32 object-cover rounded-lg border border-gray-300">
                                     </div>
                                 @endif
                                 <div class="mt-2">
@@ -447,7 +447,7 @@
                                         <div class="grid grid-cols-2 gap-4" id="existingImagesContainer">
                                             @foreach($tour->images as $image)
                                                 <div class="relative group" id="existing-image-{{ $image->id }}">
-                                                    <img src="{{ asset('storage/' . $image->image_path) }}" 
+                                                    <img src="{{ App\Facades\ImageHelper::getUrl($image->image_path) }}" 
                                                          alt="Tour image" 
                                                          class="w-full h-32 object-cover rounded-lg border-2 border-gray-300 group-hover:border-red-400 transition-colors">
                                                     <button type="button" 
@@ -725,8 +725,6 @@
                     document.getElementById('duration_nights').value = diffNights;
                     
                     console.log('Duration calculated:', { days: diffDays, nights: diffNights });
-                } else {
-                    endDateInput.setCustomValidity('Ngày kết thúc phải sau ngày bắt đầu');
                 }
             }
         }
@@ -818,6 +816,28 @@
             } else {
                 newImagesPreview.classList.add('hidden');
                 newImagesPreview.innerHTML = '';
+            }
+        });
+
+        // Paste images from clipboard (multiple)
+        document.addEventListener('paste', function (event) {
+            if (!event.clipboardData) return;
+            const items = event.clipboardData.items;
+            const files = [];
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    const file = items[i].getAsFile();
+                    if (file) files.push(file);
+                }
+            }
+            if (files.length > 0) {
+                // Append to current files
+                const input = imagesInput;
+                const dt = new DataTransfer();
+                Array.from(input.files).forEach(f => dt.items.add(f));
+                files.forEach(f => dt.items.add(f));
+                input.files = dt.files;
+                input.dispatchEvent(new Event('change'));
             }
         });
 

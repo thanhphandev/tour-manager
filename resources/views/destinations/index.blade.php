@@ -23,7 +23,7 @@
                             <!-- Image -->
                             <div class="relative h-64 overflow-hidden">
                                 @if($destination->image_url)
-                                    <img src="{{ Storage::url($destination->image_url) }}" 
+                                    <img src="{{ App\Facades\ImageHelper::getUrl($destination->image_url) }}" 
                                          alt="{{ $destination->name }}"
                                          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                                 @else

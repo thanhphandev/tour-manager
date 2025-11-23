@@ -58,7 +58,7 @@
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             @foreach($images as $image)
             <div class="relative group">
-                <img src="{{ asset('storage/' . $image->image_path) }}" 
+                <img src="{{ App\Facades\ImageHelper::getUrl($image->image_path) }}" 
                      alt="{{ $image->alt_text }}" 
                      class="w-full h-48 object-cover rounded-lg">
                 

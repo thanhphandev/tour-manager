@@ -24,10 +24,12 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'name' => fake()->name('v'),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+            'is_admin' => fake()->boolean(10),
+            'avatar' => 'https://api.dicebear.com/9.x/adventurer/svg?seed=' . fake()->name(),
             'remember_token' => Str::random(10),
         ];
     }

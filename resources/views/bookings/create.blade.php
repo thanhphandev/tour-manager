@@ -306,12 +306,11 @@
                             <h3 class="text-xl font-bold text-gray-900 mb-6">Tóm tắt đặt tour</h3>
                             
                             <!-- Tour Image -->
-                            <img src="{{ $tour->thumbnail ? asset('storage/' . $tour->thumbnail) : 'https://via.placeholder.com/400x300' }}" 
-                                 alt="{{ $tour->title }}" 
+                            <img src="{{ App\Facades\ImageHelper::getUrl($tour->primaryImage->image_path) }}" 
+                                 alt="{{ $tour->name }}" 
                                  class="w-full h-48 object-cover rounded-xl mb-4">
-                            
                             <!-- Tour Info -->
-                            <h4 class="font-bold text-gray-900 mb-3">{{ $tour->title }}</h4>
+                            <h4 class="font-bold text-gray-900 mb-3">{{ $tour->name }}</h4>
                             
                             <div class="space-y-3 text-sm mb-6">
                                 <div class="flex items-center text-gray-600">
