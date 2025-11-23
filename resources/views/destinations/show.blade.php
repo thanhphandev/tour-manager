@@ -1,8 +1,8 @@
 <x-client-layout>
     <!-- Hero Section -->
     <section class="relative h-[400px] overflow-hidden">
-        @if($destination->image_url)
-            <img src="{{ App\Facades\ImageHelper::getUrl($destination->image_url) }}" 
+        @if($destination->image)
+            <img src="{{ App\Facades\ImageHelper::getUrl($destination->image) }}" 
                  alt="{{ $destination->name }}"
                  class="w-full h-full object-cover">
         @else

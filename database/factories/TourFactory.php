@@ -26,7 +26,7 @@ class TourFactory extends Factory
                 $tourNameTemplate = fake()->randomElement([
                     'Hành trình Khám phá', 'Nghỉ dưỡng Cao cấp', 'Tour Tiết kiệm', 'Phiêu lưu Mạo hiểm', 'Trải nghiệm Văn hóa', 'Chuyến đi Gia đình', 'Tour Lãng mạn'
                 ]);
-                return $tourNameTemplate . ' ' . ($destination->name ?? 'Vietnam') . ' ' . $durationDays . ' Ngày';
+                return $tourNameTemplate . ' ' . ($destination->name ?? 'Vietnam') . ' ' . $durationDays . ' Ngày' . ' ' . ($durationDays - 1) . ' Đêm';
             },
             'slug' => function (array $attributes) {
                 $uniqueSlugSuffix = Str::random(6);

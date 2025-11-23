@@ -88,7 +88,7 @@
                         <div class="text-4xl font-black text-indigo-600 mb-1">
                             {{ number_format($tour->price_adult, 0, ',', '.') }}đ
                         </div>
-                        <div class="text-sm text-gray-500 mb-4">/người lớn</div>
+                        <div class="text-sm text-gray-500 mb-4">/người</div>
                         <a href="#booking" 
                            class="block w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-4 rounded-xl font-bold text-center shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
                             Đặt Tour Ngay

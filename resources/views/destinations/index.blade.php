@@ -22,8 +22,8 @@
                         <article class="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
                             <!-- Image -->
                             <div class="relative h-64 overflow-hidden">
-                                @if($destination->image_url)
-                                    <img src="{{ App\Facades\ImageHelper::getUrl($destination->image_url) }}" 
+                                @if($destination->image)
+                                    <img src="{{ App\Facades\ImageHelper::getUrl($destination->image) }}" 
                                          alt="{{ $destination->name }}"
                                          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                                 @else
