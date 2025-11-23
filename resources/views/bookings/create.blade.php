@@ -52,6 +52,46 @@
                             </div>
                         </div>
 
+                        <!-- Trip Information -->
+                        <div class="bg-white rounded-2xl shadow-xl p-6">
+                            <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                                <svg class="w-7 h-7 mr-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                Thông tin chuyến đi
+                            </h2>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Ngày khởi hành <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                    </div>
+                                    <input type="date" 
+                                           name="start_date" 
+                                           x-model="startDate"
+                                           min="{{ date('Y-m-d', strtotime('+1 day')) }}"
+                                           required
+                                           class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                                </div>
+                                <p class="text-sm text-gray-500 mt-2" x-show="startDate">
+                                    Ngày kết thúc dự kiến: <span class="font-semibold text-indigo-600" x-text="getEndDate()"></span>
+                                </p>
+                                @error('start_date')
+                                    <p class="text-red-600 text-sm mt-1 flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+                        </div>
+
                         <!-- Customer Information -->
                         <div class="bg-white rounded-2xl shadow-xl p-6">
                             <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
@@ -147,7 +187,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        
                         <!-- Participant Details -->
                         <div class="bg-white rounded-2xl shadow-xl p-6">
                             <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
@@ -177,9 +217,9 @@
                                                min="1" 
                                                max="{{ $tour->max_people }}"
                                                required
-                                               class="flex-1 text-center px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-semibold text-lg">
+                                               class="flex-1 w-1/2 text-center px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-semibold text-lg">
                                         <button type="button" 
-                                                @click="totalPeople < {{ $tour->max_people }} && adults++"
+                                                @click="adults++"
                                                 class="w-10 h-10 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center transition-colors">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -206,10 +246,9 @@
                                                name="children" 
                                                x-model="children"
                                                min="0" 
-                                               max="{{ $tour->max_people }}"
-                                               class="flex-1 text-center px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-semibold text-lg">
+                                               class="flex-1 w-1/2 text-center px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-semibold text-lg">
                                         <button type="button" 
-                                                @click="totalPeople < {{ $tour->max_people }} && children++"
+                                                @click="children++"
                                                 class="w-10 h-10 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center transition-colors">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -232,14 +271,13 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
                                             </svg>
                                         </button>
-                                        <input type="number" 
+                                        <input type="number"
                                                name="infants" 
                                                x-model="infants"
-                                               min="0" 
-                                               max="{{ $tour->max_people }}"
-                                               class="flex-1 text-center px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-semibold text-lg">
+                                               min="0"
+                                               class="flex-1 w-1/2 text-center px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-semibold text-lg">
                                         <button type="button" 
-                                                @click="totalPeople < {{ $tour->max_people }} && infants++"
+                                                @click="infants++"
                                                 class="w-10 h-10 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center transition-colors">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -329,7 +367,7 @@
                                     <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    <span>{{ \Carbon\Carbon::parse($tour->start_date)->format('d/m/Y') }}</span>
+                                    <span x-text="startDate ? formatDate(startDate) : 'Chưa chọn ngày'"></span>
                                 </div>
                             </div>
 
@@ -384,11 +422,48 @@
                 adults: 1,
                 children: 0,
                 infants: 0,
+                startDate: '',
+                duration: {{ $tour->duration_days }},
+                
+                init() {
+                    // Watch adults input - min 1, max 9999
+                    this.$watch('adults', (value) => {
+                        const num = parseInt(value) || 1;
+                        if (num < 1) this.adults = 1;
+                        if (num > 9999) this.adults = 9999;
+                    });
+                    
+                    // Watch children input - min 0, max 9999
+                    this.$watch('children', (value) => {
+                        const num = parseInt(value) || 0;
+                        if (num < 0) this.children = 0;
+                        if (num > 9999) this.children = 9999;
+                    });
+                    
+                    // Watch infants input - min 0, max 9999
+                    this.$watch('infants', (value) => {
+                        const num = parseInt(value) || 0;
+                        if (num < 0) this.infants = 0;
+                        if (num > 9999) this.infants = 9999;
+                    });
+                },
+                
                 get totalPeople() {
                     return parseInt(this.adults) + parseInt(this.children) + parseInt(this.infants);
                 },
                 formatPrice(price) {
                     return new Intl.NumberFormat('vi-VN').format(price) + ' VNĐ';
+                },
+                formatDate(dateString) {
+                    if (!dateString) return '';
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('vi-VN');
+                },
+                getEndDate() {
+                    if (!this.startDate) return '';
+                    const date = new Date(this.startDate);
+                    date.setDate(date.getDate() + this.duration - 1);
+                    return date.toLocaleDateString('vi-VN');
                 }
             }
         }

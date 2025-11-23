@@ -39,6 +39,16 @@
         <span class="info-label">Ngày đặt:</span>
         <span class="info-value">{{ $booking->created_at->format('d/m/Y H:i') }}</span>
     </div>
+
+    <div class="info-row">
+        <span class="info-label">Ngày khởi hành:</span>
+        <span class="info-value">{{ $booking->start_date->format('d/m/Y') }}</span>
+    </div>
+
+    <div class="info-row">
+        <span class="info-label">Ngày kết thúc (dự kiến):</span>
+        <span class="info-value">{{ $booking->end_date->format('d/m/Y') }}</span>
+    </div>
     
     <div class="divider"></div>
     

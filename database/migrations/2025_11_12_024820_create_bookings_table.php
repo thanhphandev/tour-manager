@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('tour_id')->constrained()->onDelete('cascade');
+            $table->date('start_date');
+            $table->date('end_date');
             $table->string('name');
             $table->string('email');
             $table->string('phone')->nullable();

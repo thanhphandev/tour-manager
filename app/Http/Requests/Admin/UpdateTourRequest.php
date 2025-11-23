@@ -33,8 +33,6 @@ class UpdateTourRequest extends FormRequest
             'duration_days' => 'required|integer|min:1|max:365',
             'duration_nights' => 'required|integer|min:0|max:364',
             'max_people' => 'required|integer|min:1|max:1000',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date|after:start_date',
             'status' => 'required|in:active,inactive,sold_out',
             'thumbnail' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
             'featured' => 'nullable|boolean',

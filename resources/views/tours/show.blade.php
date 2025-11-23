@@ -71,23 +71,6 @@
                                 </svg>
                                 <span class="font-semibold">Tối đa {{ $tour->max_people }} người</span>
                             </div>
-                            @php
-                                $availableSlots = $tour->getAvailableSlots();
-                            @endphp
-                            <div class="flex items-center">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                <span class="font-semibold">
-                                    @if($availableSlots > 3)
-                                        <span class="text-green-300">{{ $availableSlots }} chỗ còn lại</span>
-                                    @elseif($availableSlots > 0)
-                                        <span class="text-yellow-300">Chỉ còn {{ $availableSlots }} chỗ</span>
-                                    @else
-                                        <span class="text-red-300">Hết chỗ</span>
-                                    @endif
-                                </span>
-                            </div>
                             @if($tour->reviews_count > 0)
                                 <div class="flex items-center">
                                     <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
@@ -333,31 +316,12 @@
                             </div>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center text-gray-700">
-                                    <svg class="w-5 h-5 text-indigo-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                    </svg>
-                                    <span class="font-medium">
-                                        @php
-                                            $availableSlotsSidebar = $tour->getAvailableSlots();
-                                        @endphp
-                                        @if($availableSlotsSidebar > 3)
-                                            <span class="text-green-600">{{ $availableSlotsSidebar }} chỗ còn lại</span>
-                                        @elseif($availableSlotsSidebar > 0)
-                                            <span class="text-yellow-600">Chỉ còn {{ $availableSlotsSidebar }} chỗ</span>
-                                        @else
-                                            <span class="text-red-600">Hết chỗ</span>
-                                        @endif
-                                    </span>
-                                </div>
-                            </div>
-                            {{-- <div class="flex items-center justify-between">
-                                <div class="flex items-center text-gray-700">
                                     <svg class="w-5 h-5 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                     <span class="font-medium text-green-600">Miễn phí hủy trong 24h</span>
                                 </div>
-                            </div> --}}
+                            </div>
                         </div>
 
                         <!-- CTA Buttons -->

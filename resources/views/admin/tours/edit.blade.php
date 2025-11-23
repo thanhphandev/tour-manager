@@ -298,42 +298,12 @@
                     </div>
 
                     <div class="p-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {{-- Ngày bắt đầu --}}
-                            <div>
-                                <label for="start_date" class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Ngày Bắt Đầu
-                                </label>
-                                <input type="date" 
-                                       name="start_date" 
-                                       id="start_date" 
-                                       value="{{ old('start_date', $tour->start_date?->format('Y-m-d')) }}"
-                                       class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm @error('start_date') border-red-500 @enderror">
-                                @error('start_date')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            {{-- Ngày kết thúc --}}
-                            <div>
-                                <label for="end_date" class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Ngày Kết Thúc
-                                </label>
-                                <input type="date" 
-                                       name="end_date" 
-                                       id="end_date" 
-                                       value="{{ old('end_date', $tour->end_date?->format('Y-m-d')) }}"
-                                       class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm @error('end_date') border-red-500 @enderror">
-                                @error('end_date')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {{-- Số ngày --}}
                             <div>
                                 <label for="duration_days" class="block text-sm font-semibold text-gray-700 mb-2">
                                     Số Ngày <span class="text-red-500">*</span>
-                                    <span class="block text-xs text-gray-500 font-normal mt-1">(Tự động tính)</span>
+                                    <span class="block text-xs text-gray-500 font-normal mt-1">(Số đêm sẽ tự động = Số ngày - 1)</span>
                                 </label>
                                 <input type="number" 
                                        name="duration_days" 
@@ -342,8 +312,8 @@
                                        required
                                        min="1" 
                                        max="365"
-                                       readonly
-                                       class="block w-full rounded-lg border-gray-300 bg-gray-50 shadow-sm text-sm @error('duration_days') border-red-500 @enderror">
+                                       placeholder="Ví dụ: 3"
+                                       class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm @error('duration_days') border-red-500 @enderror">
                                 @error('duration_days')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
@@ -601,7 +571,7 @@
                                 <li>Điền đầy đủ các trường có dấu <span class="text-red-500">*</span></li>
                                 <li>Ảnh đại diện chỉ cần upload nếu muốn thay đổi</li>
                                 <li>Sử dụng Markdown để định dạng mô tả và lịch trình (Ctrl + P để xem preview)</li>
-                                <li>Số ngày sẽ tự động tính dựa trên ngày bắt đầu và kết thúc</li>
+                                <li>Nhập số ngày của tour, số đêm sẽ tự động được tính (= số ngày - 1)</li>
                                 <li>Tour nổi bật sẽ được ưu tiên hiển thị trên trang chủ</li>
                             </ul>
                         </div>
@@ -706,31 +676,23 @@
         });
 
 
-        // Auto calculate duration_days when dates change
-        const startDateInput = document.getElementById('start_date');
-        const endDateInput = document.getElementById('end_date');
-        const durationInput = document.getElementById('duration_days');
+        // Auto calculate duration_nights when duration_days changes
+        const durationDaysInput = document.getElementById('duration_days');
+        const durationNightsInput = document.getElementById('duration_nights');
 
-        function calculateDuration() {
-            if (startDateInput.value && endDateInput.value) {
-                const startDate = new Date(startDateInput.value);
-                const endDate = new Date(endDateInput.value);
-                
-                if (endDate >= startDate) {
-                    const diffTime = Math.abs(endDate - startDate);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-                    const diffNights = diffDays - 1;
-                    
-                    durationInput.value = diffDays;
-                    document.getElementById('duration_nights').value = diffNights;
-                    
-                    console.log('Duration calculated:', { days: diffDays, nights: diffNights });
-                }
-            }
+        function calculateNights() {
+            const days = parseInt(durationDaysInput.value) || 0;
+            const nights = Math.max(0, days - 1);
+            durationNightsInput.value = nights;
+            console.log('Duration calculated:', { days: days, nights: nights });
         }
 
-        startDateInput.addEventListener('change', calculateDuration);
-        endDateInput.addEventListener('change', calculateDuration);
+        // Calculate on page load
+        calculateNights();
+
+        // Calculate when days input changes
+        durationDaysInput.addEventListener('input', calculateNights);
+        durationDaysInput.addEventListener('change', calculateNights);
 
         // Thumbnail preview
         const thumbnailInput = document.getElementById('thumbnail');

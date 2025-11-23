@@ -25,8 +25,8 @@ return new class extends Migration
             $table->integer('duration_days');
             $table->integer('duration_nights');
             $table->integer('max_people')->nullable();
-            $table->date('start_date')->nullable();
-            $table->date('end_date')->nullable();
+            // $table->date('start_date')->nullable();
+            // $table->date('end_date')->nullable();
             $table->enum('status', ['active', 'inactive', 'sold_out'])->default('active');
             $table->text('thumbnail')->nullable();
             $table->boolean('featured')->default(false);

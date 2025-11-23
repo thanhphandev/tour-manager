@@ -20,15 +20,10 @@ class BookingController extends Controller
      */
     public function create(Tour $tour)
     {
-        // Check if tour is available
+        // Check if tour is available (general check)
         if (!$tour->isAvailable()) {
             return redirect()->route('tours.show', $tour)
                 ->with('error', 'Tour này hiện không khả dụng để đặt.');
-        }
-
-        if (!$this->checkAvailability($tour, 1)) {
-            return redirect()->route('tours.show', $tour)
-                ->with('error', 'Tour này hiện đã hết chỗ.');
         }
 
         return view('bookings.create', compact('tour'));
@@ -50,6 +45,13 @@ class BookingController extends Controller
         if (!$tour->isAvailable()) {
             return back()->with('error', 'Tour này hiện không khả dụng để đặt.');
         }
+
+        $startDate = $validated['start_date'];
+        
+        // Calculate end date based on duration
+        // Note: duration_days includes start day, so we add duration_days - 1
+        // Example: 2 days tour starting 01/01 -> ends 02/01. 01/01 + 1 day.
+        $endDate = \Carbon\Carbon::parse($startDate)->addDays($tour->duration_days - 1)->format('Y-m-d');
         
         DB::beginTransaction();
 
@@ -61,14 +63,14 @@ class BookingController extends Controller
                 ->lockForUpdate()
                 ->first(['id', 'max_people', 'name', 'price_adult', 'price_child', 'price_infant']);
 
-            $bookedSlots = Booking::where('tour_id', $tour->id)
-                ->whereIn('status', ['pending', 'confirmed'])
-                ->sum('total_people');
+            // Calculate required slots (exclude free participants)
+            $requiredSlots = 0;
+            if ($tour->price_adult > 0) $requiredSlots += $validated['adults'];
+            if ($tour->price_child > 0) $requiredSlots += ($validated['children'] ?? 0);
+            if ($tour->price_infant > 0) $requiredSlots += ($validated['infants'] ?? 0);
 
-            $remainingSlots = $tourLocked->max_people - $bookedSlots;
-
-            if ($totalPeople > $remainingSlots) {
-                throw new \Exception("Tour không đủ chỗ trống. Chỉ còn {$remainingSlots} chỗ.");
+            if (!$this->checkAvailability($tour, $startDate, $requiredSlots)) {
+                 throw new \Exception("Tour vào ngày này đã hết chỗ. Vui lòng chọn ngày khác!");
             }
 
             $totalAmount = $this->calculateTotalAmount($tour, $validated);
@@ -77,6 +79,8 @@ class BookingController extends Controller
             $booking = Booking::create([
                 'user_id' => auth()->id(),
                 'tour_id' => $tour->id,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'phone' => $validated['phone'],
@@ -92,12 +96,13 @@ class BookingController extends Controller
             ActivityLog::create([
                 'user_id' => auth()->id(),
                 'action' => 'created_booking',
-                'description' => "Đã tạo đặt chỗ #{$booking->booking_code} cho tour {$tourLocked->name}",
+                'description' => "Đã tạo đặt chỗ #{$booking->booking_code} cho tour {$tourLocked->name} (KH: {$startDate})",
                 'properties' => [
                     'booking_id' => $booking->id,
                     'tour_id' => $tour->id,
                     'amount' => $totalAmount,
-                    'slots' => $totalPeople,
+                    'slots' => $requiredSlots,
+                    'start_date' => $startDate,
                 ],
             ]);
             
@@ -243,13 +248,9 @@ class BookingController extends Controller
         }
     }
 
-    private function checkAvailability(Tour $tour, int $requiredSlots): bool
+    private function checkAvailability(Tour $tour, $date, int $requiredSlots): bool
     {
-        $booked = Booking::where('tour_id', $tour->id)
-            ->whereIn('status', ['pending', 'confirmed'])
-            ->sum('total_people');
-            
-        return ($tour->max_people - $booked) >= $requiredSlots;
+        return $tour->hasAvailableSlots($date, $requiredSlots);
     }
 
     /**

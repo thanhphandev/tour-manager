@@ -13,6 +13,8 @@ class Booking extends Model
     protected $fillable = [
         'user_id',
         'tour_id',
+        'start_date',
+        'end_date',
         'name',
         'email',
         'phone',
@@ -28,6 +30,8 @@ class Booking extends Model
 
     protected $casts = [
         'total_amount' => 'decimal:2',
+        'start_date' => 'date',
+        'end_date' => 'date',
     ];
 
     /**
@@ -128,6 +132,18 @@ class Booking extends Model
         return $this->status === 'pending' && !$this->isPaid();
     }
 
+    /**
+     * Get virtual status label.
+     */
+    public function getStatusLabelAttribute()
+    {
+        if ($this->status === 'confirmed' && $this->end_date < now()) {
+            return 'completed';
+        }
+
+        return $this->status;
+    }
+
     public function getCancellationError(): ?string
     {
         if ($this->status === 'cancelled') {
@@ -142,10 +158,8 @@ class Booking extends Model
             return 'Đơn đặt chỗ đã được thanh toán, vui lòng yêu cầu hoàn tiền thay vì hủy.';
         }
 
-        if ($this->tour->start_date) {
-            $startDate = Carbon::parse($this->tour->start_date);
-            
-            if ($startDate->lte(now())) {
+        if ($this->start_date) {
+            if ($this->start_date->lte(now())) {
                 return 'Tour đã khởi hành hoặc đã kết thúc, không thể hủy.';
             }
         }

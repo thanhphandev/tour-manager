@@ -160,7 +160,15 @@
                                         </div>
                                         <div>
                                             <span class="text-gray-600">Ngày đặt:</span>
-                                            <span class="font-semibold text-gray-900 ml-2">{{ $booking->created_at->format('d/m/Y H:i') }}</span>
+                                            <span class="font-semibold text-gray-900 ml-2">{{ \Carbon\Carbon::parse($booking->created_at)->format('d/m/Y H:i') }}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-600">Ngày khởi hành:</span>
+                                            <span class="font-semibold text-gray-900 ml-2">{{ \Carbon\Carbon::parse($booking->start_date)->format('d/m/Y') }}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-600">Ngày kết thúc (dự kiến):</span>
+                                            <span class="font-semibold text-gray-900 ml-2">{{ \Carbon\Carbon::parse($booking->end_date)->format('d/m/Y') }}</span>
                                         </div>
                                         <div>
                                             <span class="text-gray-600">Khách hàng:</span>

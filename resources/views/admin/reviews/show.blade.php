@@ -147,7 +147,7 @@
                         </div>
                         <div>
                             <p class="text-sm text-gray-500">Ngày đặt</p>
-                            <p class="font-medium text-gray-900">{{ $review->booking->created_at->format('d/m/Y') }}</p>
+                            <p class="font-medium text-gray-900">{{ \Carbon\Carbon::parse($review->booking->start_date)->format('d/m/Y H:i') }}</p>
                         </div>
                     </div>
                     <a href="{{ route('admin.bookings.show', $review->booking) }}" class="mt-4 block text-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">

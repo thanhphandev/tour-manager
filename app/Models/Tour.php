@@ -24,8 +24,8 @@ class Tour extends Model
         'duration_days',
         'duration_nights',
         'max_people',
-        'start_date',
-        'end_date',
+        // 'start_date',
+        // 'end_date',
         'status',
         'thumbnail',
         'featured',
@@ -35,8 +35,8 @@ class Tour extends Model
         'price_adult' => 'decimal:2',
         'price_child' => 'decimal:2',
         'price_infant' => 'decimal:2',
-        'start_date' => 'date',
-        'end_date' => 'date',
+        // 'start_date' => 'date',
+        // 'end_date' => 'date',
         'featured' => 'boolean',
     ];
 
@@ -159,25 +159,28 @@ class Tour extends Model
             return false;
         }
 
-        if ($this->end_date && $this->end_date < now()) {
-            return false;
-        }
-
         return true;
     }
 
     /**
-     * Get available slots.
+     * Get available slots for a specific date.
      */
-    public function getAvailableSlots()
+    public function getAvailableSlots($date)
     {
         if (!$this->max_people) {
-            return null; // Unlimited
+            return 999; // Unlimited
         }
 
-        $booked = $this->bookings()
+        $stats = $this->bookings()
+            ->whereDate('start_date', $date)
             ->whereIn('status', ['pending', 'confirmed'])
-            ->sum('total_people');
+            ->selectRaw('SUM(adults) as total_adults, SUM(children) as total_children, SUM(infants) as total_infants')
+            ->first();
+
+        $booked = 0;
+        if ($this->price_adult > 0) $booked += $stats->total_adults ?? 0;
+        if ($this->price_child > 0) $booked += $stats->total_children ?? 0;
+        if ($this->price_infant > 0) $booked += $stats->total_infants ?? 0;
 
         return max(0, $this->max_people - $booked);
     }
@@ -185,9 +188,9 @@ class Tour extends Model
     /**
      * Check if tour has available slots.
      */
-    public function hasAvailableSlots($requiredSlots = 1)
+    public function hasAvailableSlots($date, $requiredSlots = 1)
     {
-        $available = $this->getAvailableSlots();
+        $available = $this->getAvailableSlots($date);
         
         if ($available === null) {
             return true; // Unlimited

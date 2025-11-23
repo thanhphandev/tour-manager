@@ -45,6 +45,11 @@ class BookingFactory extends Factory
             'status' => 'pending',
             'booking_code' => Booking::generateBookingCode(),
             'total_amount' => fake()->numberBetween(2000000, 10000000),
+            
+            'start_date' => fake()->dateTimeBetween('-1 month', '+2 months'),
+            'end_date' => fn (array $attributes) => 
+                \Carbon\Carbon::instance($attributes['start_date'])
+                ->addDays(Tour::find($attributes['tour_id'])->duration_days - 1),
         ];
     }
 

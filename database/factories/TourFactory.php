@@ -66,13 +66,9 @@ class TourFactory extends Factory
             },
             'max_people' => fake()->numberBetween(15, 40),
             
-            // NGÀY KHỞI HÀNH
-            'start_date' => fake()->dateTimeBetween('+1 week', '+1 year'),
-            'end_date' => function (array $attributes) {
-                $startDate = $attributes['start_date'];
-                $durationDays = $attributes['duration_days'];
-                return (clone $startDate)->modify("+{$durationDays} days");
-            },
+            // NGÀY KHỞI HÀNH - Đã bỏ theo mô hình Daily Departure
+            // 'start_date' => fake()->dateTimeBetween('+1 week', '+1 year'),
+            // 'end_date' => ...
             
             // HÌNH ẢNH
             'thumbnail' => function (array $attributes) {

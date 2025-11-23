@@ -72,14 +72,6 @@
                         </dd>
                     </div>
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">Ngày Bắt Đầu</dt>
-                        <dd class="mt-1 text-sm text-gray-900">{{ $tour->start_date?->format('d/m/Y') ?? 'N/A' }}</dd>
-                    </div>
-                    <div>
-                        <dt class="text-sm font-medium text-gray-500">Ngày Kết Thúc</dt>
-                        <dd class="mt-1 text-sm text-gray-900">{{ $tour->end_date?->format('d/m/Y') ?? 'N/A' }}</dd>
-                    </div>
-                    <div>
                         <dt class="text-sm font-medium text-gray-500">Tour Nổi Bật</dt>
                         <dd class="mt-1 text-sm text-gray-900">{{ $tour->featured ? 'Có' : 'Không' }}</dd>
                     </div>

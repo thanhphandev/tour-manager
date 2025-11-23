@@ -72,7 +72,7 @@
                                 <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
-                                <span>{{ \Carbon\Carbon::parse($booking->tour->start_date)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($booking->tour->end_date)->format('d/m/Y') }}</span>
+                                <span>{{ \Carbon\Carbon::parse($booking->start_date)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($booking->end_date)->format('d/m/Y') }}</span>
                             </div>
                             <div class="flex items-center">
                                 <svg fill="none"
