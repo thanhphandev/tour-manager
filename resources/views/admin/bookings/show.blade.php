@@ -18,13 +18,22 @@
                     </svg>
                     Quay Lại
                 </a>
-                @if($booking->status === 'confirmed')
-                <button onclick="window.print()" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+                @if($booking->status_label === 'confirmed' || $booking->status_label === 'completed')
+                <a href="{{ route('admin.bookings.invoice.view', $booking) }}" 
+                   target="_blank"
+                   class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
                     </svg>
                     In Hóa Đơn
-                </button>
+                </a>
+                <a href="{{ route('admin.bookings.invoice.pdf', $booking) }}" 
+                   class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
+                    </svg>
+                    Tải PDF
+                </a>
                 @endif
             </div>
         </div>
@@ -48,19 +57,26 @@
                         <div class="bg-gray-50 rounded-lg p-4">
                             <dt class="text-xs font-medium text-gray-500 uppercase mb-1">Trạng Thái</dt>
                             <dd class="mt-1">
-                                @if($booking->status === 'confirmed')
+                                @if($booking->status_label === 'confirmed')
                                     <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-green-100 text-green-800">
                                         <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                         </svg>
                                         Đã Xác Nhận
                                     </span>
-                                @elseif($booking->status === 'pending')
+                                @elseif($booking->status_label === 'pending')
                                     <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-800">
                                         <svg class="w-4 h-4 mr-1.5 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                                         </svg>
                                         Đang Chờ Xác Nhận
+                                    </span>
+                                @elseif($booking->status_label === 'completed')
+                                    <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-green-100 text-green-800">
+                                        <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Đã Hoàn Thành
                                     </span>
                                 @else
                                     <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-red-100 text-red-800">
@@ -281,12 +297,24 @@
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <h3 class="text-lg font-bold text-gray-900 mb-4">Trạng Thái</h3>
                 <div class="text-center py-6">
-                    @if($booking->status === 'confirmed')
+                    @if($booking->status_label === 'confirmed')
                         <svg class="w-16 h-16 mx-auto text-green-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         <p class="text-lg font-semibold text-green-700">Đã Xác Nhận</p>
                         <p class="text-sm text-gray-500 mt-1">Booking đã được xác nhận</p>
+                    @elseif($booking->status_label === 'pending')
+                        <svg class="w-16 h-16 mx-auto text-yellow-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <p class="text-lg font-semibold text-yellow-700">Đang Chờ Xác Nhận</p>
+                        <p class="text-sm text-gray-500 mt-1">Booking đang chờ xác nhận</p>
+                    @elseif($booking->status_label === 'completed')
+                        <svg class="w-16 h-16 mx-auto text-green-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <p class="text-lg font-semibold text-green-700">Đã Hoàn Thành</p>
+                        <p class="text-sm text-gray-500 mt-1">Booking đã hoàn thành</p>
                     @else
                         <svg class="w-16 h-16 mx-auto text-red-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -297,53 +325,6 @@
                 </div>
             </div>
             @endif
-
-            <!-- Timeline -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                    <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Lịch Sử
-                </h3>
-                <div class="space-y-4">
-                    <div class="flex gap-4">
-                        <div class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-semibold text-gray-900">Đặt chỗ được tạo</p>
-                            <p class="text-xs text-gray-500 mt-0.5">{{ $booking->created_at->format('d/m/Y - H:i') }}</p>
-                            <p class="text-xs text-gray-400 mt-1">{{ $booking->created_at->diffForHumans() }}</p>
-                        </div>
-                    </div>
-                    
-                    @if($booking->status !== 'pending')
-                    <div class="flex gap-4">
-                        <div class="flex-shrink-0 w-10 h-10 {{ $booking->status === 'confirmed' ? 'bg-green-100' : 'bg-red-100' }} rounded-full flex items-center justify-center">
-                            @if($booking->status === 'confirmed')
-                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                </svg>
-                            @else
-                                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                </svg>
-                            @endif
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-semibold text-gray-900">
-                                {{ $booking->status === 'confirmed' ? 'Đã xác nhận' : 'Đã hủy' }}
-                            </p>
-                            <p class="text-xs text-gray-500 mt-0.5">{{ $booking->updated_at->format('d/m/Y - H:i') }}</p>
-                            <p class="text-xs text-gray-400 mt-1">{{ $booking->updated_at->diffForHumans() }}</p>
-                        </div>
-                    </div>
-                    @endif
-                </div>
-            </div>
 
             <!-- Payment Info -->
             @if($booking->payments && $booking->payments->count() > 0)
@@ -356,20 +337,29 @@
                 </h3>
                 <div class="space-y-3">
                     @foreach($booking->payments as $payment)
-                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-medium text-gray-500">Mã GD: #{{ $payment->payment_code }}</span>
-                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold 
-                                {{ $payment->status === 'success' ? 'bg-green-100 text-green-800' : 
-                                   ($payment->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
-                                {{ ucfirst($payment->status) }}
-                            </span>
+                        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-medium text-gray-500">Mã GD: #{{ $payment->payment_code }}</span>
+                                @php
+                                    // Map status to Tailwind color classes
+                                    $statusClasses = [
+                                        'success' => 'bg-green-100 text-green-800',
+                                        'pending' => 'bg-yellow-100 text-yellow-800',
+                                        'failed'  => 'bg-red-100 text-red-800',
+                                        'refunded'=> 'bg-blue-100 text-blue-800',
+                                    ];
+                                    $badgeClass = $statusClasses[$payment->status] ?? 'bg-gray-100 text-gray-800';
+                                @endphp
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold {{ $badgeClass }}">
+                                    {{ ucfirst($payment->status) }}
+                                </span>
+                            </div>
+                            <p class="text-sm font-bold text-gray-900">{{ number_format($payment->amount, 0, ',', '.') }} VND</p>
+                            <p class="text-xs text-gray-500 mt-1">{{ $payment->created_at->format('d/m/Y H:i') }}</p>
                         </div>
-                        <p class="text-sm font-bold text-gray-900">{{ number_format($payment->amount, 0, ',', '.') }} VND</p>
-                        <p class="text-xs text-gray-500 mt-1">{{ $payment->created_at->format('d/m/Y H:i') }}</p>
-                    </div>
                     @endforeach
                 </div>
+
             </div>
             @endif
         </div>

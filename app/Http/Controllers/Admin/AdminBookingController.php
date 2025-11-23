@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use App\Mail\PaymentConfirmationMail;
 use App\Mail\BookingCancellationMail;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AdminBookingController extends Controller
 {
@@ -156,5 +157,29 @@ class AdminBookingController extends Controller
 
         return redirect()->route('admin.bookings.show', $booking)
             ->with('success', 'Đặt chỗ đã được hủy thành công.');
+    }
+
+    public function exportInvoicePdf(Booking $booking)
+    {
+        // Load relationships
+        $booking->load(['tour.destination', 'payments']);
+
+        // Generate PDF
+        $pdf = Pdf::loadView('admin.bookings.pdf.invoice', compact('booking'));
+
+        // Download with booking code as filename
+        return $pdf->download('hoa-don-tour-' . $booking->booking_code . '.pdf');
+    }
+
+    public function viewInvoicePdf(Booking $booking)
+    {
+        // Load relationships
+        $booking->load(['tour.destination', 'payments']);
+
+        // Generate PDF
+        $pdf = Pdf::loadView('admin.bookings.pdf.invoice', compact('booking'));
+
+        // Stream inline for browser view/print
+        return $pdf->stream('hoa-don-tour-' . $booking->booking_code . '.pdf');
     }
 }

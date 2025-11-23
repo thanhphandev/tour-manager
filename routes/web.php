@@ -106,7 +106,8 @@ Route::prefix('admin')
         Route::resource('bookings', AdminBookingController::class);
         Route::put('/bookings/{booking}/confirm', [AdminBookingController::class, 'confirm'])->name('bookings.confirm');
         Route::put('/bookings/{booking}/cancel', [AdminBookingController::class, 'cancel'])->name('bookings.cancel');
-        Route::get('/bookings/{booking}/invoice', [AdminBookingController::class, 'invoice'])->name('bookings.invoice');
+        Route::get('/bookings/{booking}/invoice-pdf', [AdminBookingController::class, 'exportInvoicePdf'])->name('bookings.invoice.pdf');
+        Route::get('/bookings/{booking}/invoice-view', [AdminBookingController::class, 'viewInvoicePdf'])->name('bookings.invoice.view');
 
 
         // ----- Users -----

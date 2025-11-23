@@ -168,7 +168,7 @@ class Tour extends Model
     public function getAvailableSlots($date)
     {
         if (!$this->max_people) {
-            return 999; // Unlimited
+            return 9999; // Unlimited
         }
 
         $stats = $this->bookings()

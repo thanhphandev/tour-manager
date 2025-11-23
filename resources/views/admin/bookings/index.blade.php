@@ -168,11 +168,11 @@
                         <td class="px-6 py-4">
                             <div class="flex items-center space-x-3">
                                 <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                                    {{ strtoupper(substr($booking->user->name, 0, 1)) }}
+                                    {{ strtoupper(substr($booking->name, 0, 1)) }}
                                 </div>
                                 <div>
-                                    <div class="text-sm font-medium text-gray-900">{{ $booking->user->name }}</div>
-                                    <div class="text-xs text-gray-500">{{ $booking->user->email }}</div>
+                                    <div class="text-sm font-medium text-gray-900">{{ $booking->name }}</div>
+                                    <div class="text-xs text-gray-500">{{ $booking->email }}</div>
                                 </div>
                             </div>
                         </td>
@@ -202,19 +202,26 @@
                             <div class="text-xs text-gray-500">VND</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            @if($booking->status === 'confirmed')
+                            @if($booking->status_label === 'confirmed')
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
                                     <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                     </svg>
                                     Đã Xác Nhận
                                 </span>
-                            @elseif($booking->status === 'pending')
+                            @elseif($booking->status_label === 'pending')
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">
                                     <svg class="w-3 h-3 mr-1 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                                     </svg>
                                     Đang Chờ
+                                </span>
+                            @elseif($booking->status_label === 'completed')
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Đã Hoàn Thành
                                 </span>
                             @else
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
