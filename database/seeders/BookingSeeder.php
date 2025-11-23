@@ -22,11 +22,38 @@ class BookingSeeder extends Seeder
         for ($i = 0; $i < 50; $i++) {
             $status = fake()->randomElement(['pending', 'confirmed', 'cancelled']);
             
-            Booking::factory()->create([
+            $booking = Booking::factory()->create([
                 'user_id' => $users->random()->id,
                 'tour_id' => $tours->random()->id,
                 'status' => $status
             ]);
+
+            // Create Payment based on booking status
+            if ($status === 'confirmed') {
+                \App\Models\Payment::factory()->success()->create([
+                    'booking_id' => $booking->id,
+                    'amount' => $booking->total_amount,
+                ]);
+            } elseif ($status === 'pending') {
+                \App\Models\Payment::factory()->create([
+                    'booking_id' => $booking->id,
+                    'amount' => $booking->total_amount,
+                    'status' => 'pending',
+                ]);
+            } elseif ($status === 'cancelled') {
+                // Randomly decide if it was refunded or just cancelled without payment
+                if (fake()->boolean(50)) {
+                    \App\Models\Payment::factory()->refunded()->create([
+                        'booking_id' => $booking->id,
+                        'amount' => $booking->total_amount,
+                    ]);
+                } else {
+                     \App\Models\Payment::factory()->failed()->create([
+                        'booking_id' => $booking->id,
+                        'amount' => $booking->total_amount,
+                    ]);
+                }
+            }
         }
         
         $this->command->info('✅ BookingSeeder: 50 bookings created.');
