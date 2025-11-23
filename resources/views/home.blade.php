@@ -105,7 +105,7 @@
             <!-- Section Header -->
             <div class="text-center mb-16">
                 <span class="inline-block bg-indigo-100 text-indigo-600 rounded-full px-4 py-2 text-sm font-semibold mb-4">
-                    ⭐ NỔI BẬT
+                    NỔI BẬT
                 </span>
                 <h2 class="text-4xl md:text-5xl font-black text-gray-900 mb-4">
                     Tours Nổi Bật
@@ -136,12 +136,12 @@
                                 
                                 <!-- Featured Badge -->
                                 <div class="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
-                                    ⭐ Nổi Bật
+                                    Nổi Bật
                                 </div>
 
                                 <!-- Destination Badge -->
                                 <div class="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold">
-                                    📍 {{ $tour->destination->name }}
+                                      {{ $tour->destination->name }}
                                 </div>
                             </div>
 
@@ -204,7 +204,7 @@
             <!-- Section Header -->
             <div class="text-center mb-16">
                 <span class="inline-block bg-purple-100 text-purple-600 rounded-full px-4 py-2 text-sm font-semibold mb-4">
-                    🆕 MỚI NHẤT
+                    MỚI NHẤT
                 </span>
                 <h2 class="text-4xl md:text-5xl font-black text-gray-900 mb-4">
                     Tours Mới Nhất
@@ -235,12 +235,12 @@
                                 
                                 <!-- New Badge -->
                                 <div class="absolute top-4 right-4 bg-gradient-to-r from-green-400 to-emerald-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg animate-pulse">
-                                    🆕 Mới
+                                    Mới
                                 </div>
 
                                 <!-- Destination Badge -->
                                 <div class="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold">
-                                    📍 {{ $tour->destination->name }}
+                                      {{ $tour->destination->name }}
                                 </div>
                             </div>
 

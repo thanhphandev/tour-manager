@@ -26,7 +26,7 @@
                 </nav>
 
                 <h1 class="text-4xl md:text-5xl font-black text-white mb-4">
-                    📍 {{ $destination->name }}
+                      {{ $destination->name }}
                 </h1>
                 <p class="text-xl text-white/90 max-w-2xl">
                     Khám phá {{ $tours->total() }} tours du lịch tại {{ $destination->name }}

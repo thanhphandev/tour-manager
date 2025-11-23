@@ -17,7 +17,6 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminReviewController;
 use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\AdminActivityLogController;
-use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminEmailTemplateController;
 use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\Admin\AdminEmailController;
@@ -129,14 +128,6 @@ Route::prefix('admin')
         Route::get('/activity-logs/{activityLog}', [AdminActivityLogController::class, 'show'])->name('activity-logs.show');
         Route::delete('/activity-logs/{activityLog}', [AdminActivityLogController::class, 'destroy'])->name('activity-logs.destroy');
         Route::post('/activity-logs/clear', [AdminActivityLogController::class, 'clear'])->name('activity-logs.clear');
-
-        // ----- Settings -----
-        Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
-        Route::get('/settings/edit', [AdminSettingController::class, 'edit'])->name('settings.edit');
-        Route::put('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
-        Route::get('/settings/create', [AdminSettingController::class, 'create'])->name('settings.create');
-        Route::post('/settings', [AdminSettingController::class, 'store'])->name('settings.store');
-        Route::delete('/settings/{setting}', [AdminSettingController::class, 'destroy'])->name('settings.destroy');
 
     // ----- Reports -----
     Route::prefix('reports')->name('reports.')->group(function () {

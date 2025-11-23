@@ -43,7 +43,6 @@ Hệ thống quản lý tour du lịch toàn diện với các tính năng đặ
 - 📈 Báo cáo chi tiết (doanh thu, bookings, tours, customers)
 - 📄 Xuất PDF reports
 - 🔔 Activity logs đầy đủ
-- ⚙️ Settings quản lý cấu hình
 
 ### 🔧 Kỹ Thuật
 - 🎨 Tailwind CSS với Alpine.js

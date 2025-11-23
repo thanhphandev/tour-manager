@@ -102,7 +102,6 @@ async function capture(page, url, name) {
         await capture(adminPage, '/admin/reviews', '22_Admin_Reviews');
         await capture(adminPage, '/admin/reports/revenue', '23_Admin_Revenue');
         await capture(adminPage, '/admin/activity-logs', '24_Admin_Activity_Logs');
-        await capture(adminPage, '/admin/settings', '25_Admin_Settings');
     } catch (e) {
         console.error('Admin login/capture failed:', e.message);
     }

@@ -174,7 +174,7 @@
 
                                         <!-- Destination Badge -->
                                         <div class="absolute top-4 left-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-semibold">
-                                            📍 {{ $tour->destination->name }}
+                                              {{ $tour->destination->name }}
                                         </div>
 
                                         <!-- Featured Badge -->

@@ -30,7 +30,6 @@ class DatabaseSeeder extends Seeder
             DestinationSeeder::class,
             TourSeeder::class,
             TourImageSeeder::class,
-            // SettingSeeder::class,
             AdminUserSeeder::class,
             UserSeeder::class,
             BookingSeeder::class,
