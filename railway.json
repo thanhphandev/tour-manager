@@ -2,10 +2,10 @@
   "$schema": "https://railway.app/datamodel.schema.json",
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "composer install && npm install && npm run build"
+    "buildCommand": "composer install --no-dev && npm install && npm run build"
   },
   "deploy": {
-    "startCommand": "vendor/bin/heroku-php-apache2 public/",
+    "startCommand": "php artisan serve --host 0.0.0.0 --port $PORT",
     "postDeployCommand": "php artisan migrate --force"
   }
 }
