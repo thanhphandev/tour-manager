@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Services\MarkdownService;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,6 +23,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Ép buộc dùng https khi chạy trên production (Railway)
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+        }
     }
 }
