@@ -24,7 +24,7 @@
                 <!-- Logo -->
                 <a href="{{ route('home') }}" class="flex items-center space-x-3 group">
                     <!-- Logo Image -->
-                    <img src="{{ asset('storage/' . 'images/logo.png') }}" 
+                    <img src="{{ asset('images/logo.png') }}" 
                          alt="TravelGo Logo" 
                          class="w-12 h-12 object-contain transition-transform group-hover:scale-105 rounded-2xl" />
                     <!-- Brand Name -->

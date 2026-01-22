@@ -4,7 +4,7 @@
             <!-- Logo & Title -->
             <div class="text-center mb-8">
                 <a href="{{ route('home') }}" class="inline-block group">
-                    <img src="{{ asset('/storage'. '/images/logo.png') }}" alt="Logo" class="h-16 w-auto mx-auto transition-transform duration-300 group-hover:scale-110">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-16 w-auto mx-auto transition-transform duration-300 group-hover:scale-110">
                 </a>
                 <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
                     Chào mừng trở lại

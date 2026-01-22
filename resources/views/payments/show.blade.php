@@ -30,7 +30,7 @@
                                 <div class="flex items-center justify-between w-full">
                                     <div class="flex items-center gap-4">
                                         <div class="w-14 h-10 flex items-center justify-center bg-white rounded-lg border border-gray-200 shadow-sm">
-                                            <img src="{{ asset('storage/images/paypal.svg') }}" class="h-6 w-auto" alt="PayPal">
+                                            <img src="{{ asset('images/paypal.svg') }}" class="h-6 w-auto" alt="PayPal">
                                         </div>
                                         <div>
                                             <div class="flex items-center gap-2">
@@ -56,7 +56,7 @@
                                 <div class="flex items-center justify-between w-full">
                                     <div class="flex items-center gap-4">
                                         <div class="w-14 h-10 flex items-center justify-center bg-white rounded-lg border border-gray-200 shadow-sm">
-                                            <img src="{{ asset('storage/images/vnpay.webp') }}" class="h-5 w-auto" alt="VNPay">
+                                            <img src="{{ asset('images/vnpay.png') }}" class="h-5 w-auto" alt="VNPay">
                                         </div>
                                         <div>
                                             <div class="flex items-center gap-2">
@@ -82,7 +82,7 @@
                                 <div class="flex items-center justify-between w-full">
                                     <div class="flex items-center gap-4">
                                         <div class="w-14 h-10 flex items-center justify-center bg-white rounded-lg border border-gray-200 shadow-sm">
-                                            <img src="{{ asset('storage/images/visa.png') }}" class="h-6 w-auto" alt="Visa">
+                                            <img src="{{ asset('images/visa.png') }}" class="h-6 w-auto" alt="Visa">
                                         </div>
                                         <div>
                                             <div class="flex items-center gap-2">
@@ -115,7 +115,7 @@
                                 @csrf
                                 <div class="text-center py-4">
                                     <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <img src="{{ asset('storage/images/paypal.svg') }}" alt="PayPal" class="h-8 w-auto">
+                                        <img src="{{ asset('images/paypal.svg') }}" alt="PayPal" class="h-8 w-auto">
                                     </div>
                                     <h3 class="text-xl font-bold text-gray-900">Thanh toán với PayPal</h3>
                                     <p class="text-gray-500 mt-2 max-w-md mx-auto">Bạn sẽ được chuyển hướng đến trang thanh toán an toàn của PayPal để hoàn tất giao dịch.</p>
@@ -147,7 +147,7 @@
                                 @csrf
                                 <div class="text-center py-4">
                                     <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100">
-                                        <img src="{{ asset('storage/images/vnpay.webp') }}" alt="VNPay" class="h-8 w-auto">
+                                        <img src="{{ asset('images/vnpay.png') }}" alt="VNPay" class="h-8 w-auto">
                                     </div>
                                     <h3 class="text-xl font-bold text-gray-900">Thanh toán qua VNPay</h3>
                                     <p class="text-gray-500 mt-2 max-w-md mx-auto">Quét mã QR hoặc sử dụng thẻ ATM nội địa/quốc tế thông qua cổng thanh toán VNPay.</p>
@@ -188,7 +188,7 @@
                                 <div class="flex items-center justify-between mb-6">
                                     <h3 class="text-lg font-bold text-gray-900">Thông tin thẻ</h3>
                                     <div class="flex gap-2">
-                                        <img src="{{ asset('storage/images/visa.png') }}" class="h-6 w-auto opacity-70">
+                                        <img src="{{ asset('images/visa.png') }}" class="h-6 w-auto opacity-70">
                                     </div>
                                 </div>
 
